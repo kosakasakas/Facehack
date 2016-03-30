@@ -57,6 +57,48 @@ Garridoらは自動で完全にイメージベースドなアプローチで全�
 
 TBD..
 
+# 4. Energy Formulation
+
+- 式3を参照
+    - データ項は，生成されたイメージと入力データ間の類似度を測る．
+    - パラメーターベクターPの尤度は，統計的な正規Eregによって考慮される？
+- Photo-Consistency
+入力データが生成された画像によって以下に説明されているかを定量的に図るために，ピクセルレベルでphoto-metric alignment errorを図る．
+- Feature alignment
+    - RGB群の中で検出された目立った表情特徴量ポイントのペアから特徴類似性を強調する．
+    - 最新のfacial landmark tracking algorithmを採用
+- Statistical Regularization
+    - 通常の人口分布の仮定に基づいて生成された顔のもっともらしさを強調する
+    - 統計的に平均に近いパラメータを使用する？
+    - 一般的な統計戦略は，顔の形状や反射，最適化戦略がローカルミニマムに陥らないように防ぐ
+
+TBD..
+
+# 5. Data-parallel Optimization Strategy
+
+- 非制約非線形最適化問題を解く
+- リアルタイムにオブジェクト関数を最小化させる
+    - data-paralell GPU-based Iteraticely Reweighted Least Squares(IRLS) solverを用いる
+    - IRLSのキーアイデアは，繰り返しの度に問題を二つの要素のノルムを分割させながら，非線形二乗法の形へと変形させること
+- 具体的なアルゴリズムはサプリメンタルにて
+
+TBD..
+
+# 6. Non-Rigid Model-Based Bundling
+
+- ビデオ映像のシナリオ下に制約されたアクターの個性を推定する
+Non-rigid model-based bundling approach
+- 入力されたビデオシーケンスのk個以上のあるキーフレームを通じたすべてのパラメータを推定する
+- 推定されるもの
+    - global identity
+    - intrinsic
+    - per-frame pose
+    - illumination parameters
+- 全てのキーフレームで照明や，表情，アングルといった潜在下で同一の顔が観測されるので，我々は，ロバストに個性をすべての問題から分離することができる．
+    - 内部のカメラパラメータを解く
+
+TBD..
+
 # 7. Expression Transfer
 各アクターの表情の個性を保ちながらソースからターゲットのアクターへと表情を転写するために，sub-space deformation transferの技術を提案する．
 
