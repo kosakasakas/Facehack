@@ -60,11 +60,11 @@ TBD..
 # 7. Expression Transfer
 各アクターの表情の個性を保ちながらソースからターゲットのアクターへと表情を転写するために，sub-space deformation transferの技術を提案する．
 
-<strong>Sumner[27]との違い
+Sumner[27]との違い
 
 Sumnerらのdeformation transfer energyのアプローチとは異なり，expression blendshapesによって間引かれた空間の中で直接処理をする．これは，擬似逆行列?(pseudo-inverse of the system matrix)の事前計算だけでなく，高速な転写速度を実現する最適化問題の次元削減も可能にする．ソースとターゲットの個性?(identity)を固定されたものと仮定し，neutral, deformed source, そして，transfer sourceを入力とする．また，事前に削減された部分空間内でのtransferred facial expressionが出力となる．
 
-<strong>手順
+手順
 
 Sumnerの手法と同様，まずソースの三角形を初期形状から変形形状へ変形させるための，ソース形状の初期変形勾配(deformation gradients)を計算する．その変形先は，線形最小二乗問題(linear least-squares problem)を解くことにより変形前の状態に基づいて見つけることができる？ 三角形に含まれる頂点のインデックス3つを用いて，VとV^を計算するが，その際未知のターゲット変形が最小化される(式7).この問題はcanonical least-squares形式に書き換えることができる(式8)．
 
