@@ -58,18 +58,14 @@ Garridoらは自動で完全にイメージベースドなアプローチで全�
 TBD..
 
 # 7. Expression Transfer
-各アクターの表情の個性を保ちながら，ソースからターゲットのアクターへと表情を転写するために，sub-space deformation transferの技術を提案する．我々の手法は，Sumnerらのdeformation transfer energyから影響を受けているが，我々の手法ではexpression blendshapesによって間引かれた空間の中で直接処理をする．これは，擬似逆行列?(pseudo-inverse of the system matrix)の事前計算を可能にするだけでなく，高速な転写速度を実現する最適化問題の次元削減に大きく貢献している．ソースとターゲットの個性?(identity)がfixされたものと仮定し，neutral, deformed source, そして，transfer sourceを入力とする．また，事前に削減された部分空間内でのtransferred facial expressionが出力となる．
+各アクターの表情の個性を保ちながらソースからターゲットのアクターへと表情を転写するために，sub-space deformation transferの技術を提案する．
 
-Sumnerの手法と同様に，我々もまず，ソースの三角形を初期形状から変形形状へ変形させるソース形状の初期変形勾配(deformation gradients)を計算する．その変形先は，線形最小二乗問題(linear least-squares problem)を解くことにより，変形前の状態に基づいて見つけることができる？ 三角形iに含まれる頂点のインデックス3つを用いて，VとV^を計算するが，その時に，道のターゲット変形が最小化される(式7).この問題は，canonical least-squares形式に書き換えることができる(式8)．
+<strong>Sumner[27]との違い
+
+Sumnerらのdeformation transfer energyのアプローチとは異なり，expression blendshapesによって間引かれた空間の中で直接処理をする．これは，擬似逆行列?(pseudo-inverse of the system matrix)の事前計算だけでなく，高速な転写速度を実現する最適化問題の次元削減も可能にする．ソースとターゲットの個性?(identity)を固定されたものと仮定し，neutral, deformed source, そして，transfer sourceを入力とする．また，事前に削減された部分空間内でのtransferred facial expressionが出力となる．
+
+<strong>手順
+
+Sumnerの手法と同様，まずソースの三角形を初期形状から変形形状へ変形させるための，ソース形状の初期変形勾配(deformation gradients)を計算する．その変形先は，線形最小二乗問題(linear least-squares problem)を解くことにより変形前の状態に基づいて見つけることができる？ 三角形に含まれる頂点のインデックス3つを用いて，VとV^を計算するが，その際未知のターゲット変形が最小化される(式7).この問題はcanonical least-squares形式に書き換えることができる(式8)．
 
 その行列Aは一定で，表現部分空間(expression sub-space)に投影されるテンプレートメッシュのエッジ情報を含んでいる．初期表情内でのターゲットのエッジ情報は，right-hand side bを含んでいる．deformed source(delta^s)付きのbは，各更新入力フレームでGPU計算される．二乗エネルギー(quadratic energy)の最小化は，corresponding normal equationを解くことによって計算される．system matrixは一定のため，我々は，そのPseudo InverseをSingular Value Decomposition(SVD)を用いて事前計算することができる．その後，76*76の線形システムがリアルタイムで解かれる．それらしい形状や滑らかさを保証するようブレンドシェイプモデルを制限しているため，[27,4]のような追加のスムーズ化処理を必要としない．
-
-Sumner[27]との違い
-初期変形勾配を
-> 表情ブレンドシェイプによる空間に直接処理する点？ これは，疑似逆行列の事前計算を可能にするだけでなく，劇的に最適化問題の次元を減らせるため，リアルタイムでの転写が可能となる．
-
-
-TBD..
-
-# 8.
-コメント追加したぉ by いわもと
