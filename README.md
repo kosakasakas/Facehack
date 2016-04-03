@@ -5,6 +5,16 @@
 OS X 10.10.5
 openFrameworks v0.9.3
 
+# 使い方とか
+現状はopenFrameworksのプロジェクトなので、このリポジトリを丸ごとapps/myApps以下においてください。
+
+サブモジュールを更新する必要があるので、以下のコマンドを打っておいてください。
+
+    git submodule update --init --recursive
+
+# 使っているaddon
+[ofTimeMeasurements](https://github.com/armadillu/ofxTimeMeasurements)
+
 # ドキュメント
 [Face2Face日本語要約](./document/Face2Face-jp.md)
 
