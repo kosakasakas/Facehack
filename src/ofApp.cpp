@@ -1,8 +1,13 @@
 #include "ofApp.h"
+#include "ofxTimeMeasurements.h"
 
 //--------------------------------------------------------------
 void ofApp::setup(){
-
+    // フレームレートの設定。とりあえず上限なし
+    float frameRate = 0.0f;
+    ofSetVerticalSync(false);
+    ofSetFrameRate(frameRate);
+    TIME_SAMPLE_SET_FRAMERATE(frameRate);
 }
 
 //--------------------------------------------------------------
