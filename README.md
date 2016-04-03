@@ -10,8 +10,6 @@ openFrameworks v0.9.3
 
 # 参考(お世話になったサイトとか)
 元論文
-
 [Face2Face](http://www.graphics.stanford.edu/~niessner/thies2016face.html)
-
 gitignoreの自動生成ツール
 [gitignore.io](https://www.gitignore.io/)
