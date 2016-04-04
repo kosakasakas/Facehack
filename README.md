@@ -12,8 +12,9 @@ openFrameworks v0.9.3
 
     git submodule update --init --recursive
 
-# 使っているaddon
+# 使っている外部ライブラリ
 [ofTimeMeasurements](https://github.com/armadillu/ofxTimeMeasurements)
+[Eigen](http://eigen.tuxfamily.org/index.php)
 
 # ドキュメント
 [Face2Face日本語要約](./document/Face2Face-jp.md)
