@@ -1,6 +1,8 @@
 #include "ofApp.h"
 #include "ofxTimeMeasurements.h"
 
+#include "../extAddons/Eigen/Dense"
+
 //--------------------------------------------------------------
 void ofApp::setup(){
     // フレームレートの設定。とりあえず上限なし
@@ -12,7 +14,10 @@ void ofApp::setup(){
 
 //--------------------------------------------------------------
 void ofApp::update(){
-
+    Eigen::Vector4f v1; v1 << 1.0f, 1.0f, 1.0f, 1.0f;
+    Eigen::Vector4f v2; v2 << 0.2f, 0.2f, 0.1f, 0.1f;
+    float res   = v1.dot(v2);
+    ofLog(OF_LOG_NOTICE, "dot: %f", res);
 }
 
 //--------------------------------------------------------------
