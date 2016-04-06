@@ -1,23 +1,39 @@
 #include "ofApp.h"
+#include "ofTest.h"
 #include "ofxTimeMeasurements.h"
+#include "System/Util/KSUtil.h"
 
-#include "../extAddons/Eigen/Dense"
+using namespace std;
 
 //--------------------------------------------------------------
 void ofApp::setup(){
+    // ==================================
     // フレームレートの設定。とりあえず上限なし
+    // ==================================
     float frameRate = 0.0f;
     ofSetVerticalSync(false);
     ofSetFrameRate(frameRate);
     TIME_SAMPLE_SET_FRAMERATE(frameRate);
+    
+    // ==================================
+    // テスト実施
+    // ==================================
+    {
+        bool testResult = false;
+        
+        shared_ptr<ofTest> pTest = make_shared<ofTest>();
+        if (pTest->Initialize())
+        {
+            testResult = pTest->DoTest();
+        }
+        
+        KSUtil::ofASSERT(testResult, "テストに失敗しました。");
+    }
 }
 
 //--------------------------------------------------------------
 void ofApp::update(){
-    Eigen::Vector4f v1; v1 << 1.0f, 1.0f, 1.0f, 1.0f;
-    Eigen::Vector4f v2; v2 << 0.2f, 0.2f, 0.1f, 0.1f;
-    float res   = v1.dot(v2);
-    ofLog(OF_LOG_NOTICE, "dot: %f", res);
+    
 }
 
 //--------------------------------------------------------------
