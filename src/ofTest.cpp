@@ -71,7 +71,7 @@ bool    ofTest::DoTest()
             for(int i=0,n=d.rows(); i<n; ++i)
             {
                 // d0 = -x
-                // d1 = 1
+                // d1 = -1
                 d(i, 0)         = -data(0,i);
                 d(i, 1)         = -1;
             }
