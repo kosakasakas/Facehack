@@ -7,6 +7,8 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		14E2ED591CB3AAED008D7B8A /* KSOptimizerForNLLS.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 14E2ED571CB3AAED008D7B8A /* KSOptimizerForNLLS.cpp */; };
+		14E2ED6B1CB3D473008D7B8A /* ofTest.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 14E2ED691CB3D472008D7B8A /* ofTest.cpp */; };
 		E4328149138ABC9F0047C5CB /* openFrameworksDebug.a in Frameworks */ = {isa = PBXBuildFile; fileRef = E4328148138ABC890047C5CB /* openFrameworksDebug.a */; };
 		E4B69E200A3A1BDC003C02F2 /* main.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E4B69E1D0A3A1BDC003C02F2 /* main.cpp */; };
 		E4B69E210A3A1BDC003C02F2 /* ofApp.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E4B69E1E0A3A1BDC003C02F2 /* ofApp.cpp */; };
@@ -43,6 +45,13 @@
 /* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
+		14E2ED561CB3A98B008D7B8A /* KSMath.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = KSMath.h; sourceTree = "<group>"; };
+		14E2ED571CB3AAED008D7B8A /* KSOptimizerForNLLS.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = KSOptimizerForNLLS.cpp; sourceTree = "<group>"; };
+		14E2ED5A1CB3AB92008D7B8A /* KSOptimizerForNLLS.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = KSOptimizerForNLLS.h; sourceTree = "<group>"; };
+		14E2ED671CB3B549008D7B8A /* KSTypeDef.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = KSTypeDef.h; sourceTree = "<group>"; };
+		14E2ED691CB3D472008D7B8A /* ofTest.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ofTest.cpp; sourceTree = "<group>"; };
+		14E2ED6A1CB3D472008D7B8A /* ofTest.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ofTest.h; sourceTree = "<group>"; };
+		14E2ED6D1CB3D6F0008D7B8A /* KSUtil.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = KSUtil.h; sourceTree = "<group>"; };
 		E4328143138ABC890047C5CB /* openFrameworksLib.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = openFrameworksLib.xcodeproj; path = ../../../libs/openFrameworksCompiled/project/osx/openFrameworksLib.xcodeproj; sourceTree = SOURCE_ROOT; };
 		E4B69B5B0A3A1756003C02F2 /* Face2FaceDebug.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Face2FaceDebug.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		E4B69E1D0A3A1BDC003C02F2 /* main.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; name = main.cpp; path = src/main.cpp; sourceTree = SOURCE_ROOT; };
@@ -70,6 +79,34 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		14E2ED541CB3A941008D7B8A /* System */ = {
+			isa = PBXGroup;
+			children = (
+				14E2ED6C1CB3D6DF008D7B8A /* Util */,
+				14E2ED551CB3A941008D7B8A /* Math */,
+			);
+			path = System;
+			sourceTree = "<group>";
+		};
+		14E2ED551CB3A941008D7B8A /* Math */ = {
+			isa = PBXGroup;
+			children = (
+				14E2ED561CB3A98B008D7B8A /* KSMath.h */,
+				14E2ED671CB3B549008D7B8A /* KSTypeDef.h */,
+				14E2ED571CB3AAED008D7B8A /* KSOptimizerForNLLS.cpp */,
+				14E2ED5A1CB3AB92008D7B8A /* KSOptimizerForNLLS.h */,
+			);
+			path = Math;
+			sourceTree = "<group>";
+		};
+		14E2ED6C1CB3D6DF008D7B8A /* Util */ = {
+			isa = PBXGroup;
+			children = (
+				14E2ED6D1CB3D6F0008D7B8A /* KSUtil.h */,
+			);
+			path = Util;
+			sourceTree = "<group>";
+		};
 		6948EE371B920CB800B5AC1A /* local_addons */ = {
 			isa = PBXGroup;
 			children = (
@@ -109,9 +146,12 @@
 		E4B69E1C0A3A1BDC003C02F2 /* src */ = {
 			isa = PBXGroup;
 			children = (
+				14E2ED541CB3A941008D7B8A /* System */,
 				E4B69E1D0A3A1BDC003C02F2 /* main.cpp */,
 				E4B69E1E0A3A1BDC003C02F2 /* ofApp.cpp */,
 				E4B69E1F0A3A1BDC003C02F2 /* ofApp.h */,
+				14E2ED691CB3D472008D7B8A /* ofTest.cpp */,
+				14E2ED6A1CB3D472008D7B8A /* ofTest.h */,
 			);
 			path = src;
 			sourceTree = SOURCE_ROOT;
@@ -244,6 +284,8 @@
 				E4B69E200A3A1BDC003C02F2 /* main.cpp in Sources */,
 				F8496C631CB1147A00F301C3 /* ofxTimeMeasurements.cpp in Sources */,
 				E4B69E210A3A1BDC003C02F2 /* ofApp.cpp in Sources */,
+				14E2ED6B1CB3D473008D7B8A /* ofTest.cpp in Sources */,
+				14E2ED591CB3AAED008D7B8A /* KSOptimizerForNLLS.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -330,6 +372,7 @@
 				GCC_DYNAMIC_NO_PIC = NO;
 				GCC_GENERATE_DEBUGGING_SYMBOLS = YES;
 				GCC_MODEL_TUNING = NONE;
+				GCC_PREPROCESSOR_DEFINITIONS = USE_LOCAL_EIGEN;
 				HEADER_SEARCH_PATHS = "$(OF_CORE_HEADERS)";
 				ICON = "$(ICON_NAME_DEBUG)";
 				ICON_FILE = "$(ICON_FILE_PATH)$(ICON)";
@@ -337,6 +380,7 @@
 				INSTALL_PATH = /Applications;
 				LIBRARY_SEARCH_PATHS = "$(inherited)";
 				PRODUCT_NAME = "$(TARGET_NAME)Debug";
+				USER_HEADER_SEARCH_PATHS = "$(SRCROOT)/extAddons/cppopt/inc/";
 				WRAPPER_EXTENSION = app;
 			};
 			name = Debug;
@@ -354,6 +398,7 @@
 				FRAMEWORK_SEARCH_PATHS_QUOTED_FOR_TARGET_1 = "\"$(SRCROOT)/../../../libs/glut/lib/osx\"";
 				GCC_GENERATE_DEBUGGING_SYMBOLS = YES;
 				GCC_MODEL_TUNING = NONE;
+				GCC_PREPROCESSOR_DEFINITIONS = USE_LOCAL_EIGEN;
 				HEADER_SEARCH_PATHS = "$(OF_CORE_HEADERS)";
 				ICON = "$(ICON_NAME_RELEASE)";
 				ICON_FILE = "$(ICON_FILE_PATH)$(ICON)";
@@ -361,6 +406,7 @@
 				INSTALL_PATH = /Applications;
 				LIBRARY_SEARCH_PATHS = "$(inherited)";
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				USER_HEADER_SEARCH_PATHS = "$(SRCROOT)/extAddons/cppopt/inc/";
 				WRAPPER_EXTENSION = app;
 				baseConfigurationReference = E4EB6923138AFD0F00A09F29;
 			};
