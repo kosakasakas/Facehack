@@ -87,6 +87,60 @@ namespace Kosakasakas {
             return m_MatData;
         }
         
+        const KSMatrixXd&   GetLastResidualMat() const
+        {
+            return m_LastResidualMat;
+        }
+        
+        void GetIRISWieghtMat(KSMatrixXd& dst);
+        
+        void    SetLastResidualMat(KSMatrixXd& mat)
+        {
+            m_LastResidualMat   = mat;
+        }
+        
+        template <typename T, int R, int L> std::string SerializeMat(const Eigen::Matrix<T, R, L>& M){
+            std::stringstream strm;
+            
+            // put the size of the serialized matrix
+            //strm << R << "," << L << ",";
+            
+            // put the elements of the serialized matrix
+            for(int i=0; i<R; i++){
+                for(int j=0; j<L; j++){
+                    strm << M(i,j);
+                    
+                    // separator
+                    if(!(i == R-1 && j == L-1))
+                        strm << ",";
+                }
+            }
+            
+            return strm.str();
+        }
+        
+        template <typename T> Eigen::Matrix<T, Eigen::Dynamic, Eigen::Dynamic> DeserializeMat(std::string str){
+            Eigen::Matrix<T, Eigen::Dynamic, Eigen::Dynamic> M;
+            int R, L;
+            
+            // sed "s/,/ /g" str
+            replace(str.begin(), str.end(), ',', ' ');
+            
+            std::stringstream strm(str);
+            // get the size of the output matrix
+            strm >> R >> L;
+            
+            // get the elements of the output matrix
+            M = decltype(M)(R, L);
+            for(int i=0; i<R; i++){
+                for(int j=0; j<L; j++){
+                    strm >> M(i, j);
+                }
+            }
+            
+            return M;
+        }
+        
     private:
         //! 内部初期化されているかどうか
         bool        m_IsInitialized;
@@ -98,6 +152,8 @@ namespace Kosakasakas {
         KSMatrixXd  m_MatParam;
         //! サンプルデータマトリックスを保持するオブジェクト
         KSMatrixXd  m_MatData;
+        //! 前ステップでの残差行列
+        KSMatrixXd  m_LastResidualMat;
     };
     
 } //namespace Kosakasakas {

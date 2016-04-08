@@ -32,6 +32,7 @@ bool    KSOptimizerForNLLS::Initialize(KSFunction& residual,
     m_MatParam      = std::move(initParam);
     m_MatData       = std::move(data);
     m_IsInitialized = true;
+    m_LastResidualMat   = KSMatrixXd::Ones(m_MatData.cols(), 1);
 
     return true;
 }
@@ -69,3 +70,10 @@ double KSOptimizerForNLLS::GetSquaredResidualsSum()
 {
     return fabs((m_FuncResidual(m_MatParam).transpose() * m_FuncResidual(m_MatParam))(0));
 }
+
+void KSOptimizerForNLLS::GetIRISWieghtMat(KSMatrixXd& dst)
+{
+    dst = m_LastResidualMat.cwiseAbs().cwiseMax(0.0001).cwiseInverse().asDiagonal();
+}
+
+

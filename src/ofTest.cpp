@@ -59,6 +59,15 @@ bool    ofTest::DoTest()
                 // r = y-(ax+b)
                 r(i)    = data(1,i) - (x(0) * data(0, i) + x(1));
             }
+            
+            optimizer.SetLastResidualMat(r);
+            
+            KSMatrixXd w;
+            optimizer.GetIRISWieghtMat(w);
+            
+            r = w * r;
+            
+            
             return r;
         };
         
