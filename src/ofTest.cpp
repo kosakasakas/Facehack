@@ -42,7 +42,7 @@ bool    ofTest::DoTest()
         
         // データセットを登録
         KSMatrixXd  data(2, 5);
-        data << 0.01, 0.04, 0.08, 0.12, 0.16,
+        data << 0.01, 0.04, 0.08, 0.12 * 1.005, 0.16,
                 1.02, 1.08, 1.16, 1.24, 1.32;
         
         // オプティマイザの宣言
@@ -60,13 +60,8 @@ bool    ofTest::DoTest()
                 r(i)    = data(1,i) - (x(0) * data(0, i) + x(1));
             }
             
-            optimizer.SetLastResidualMat(r);
-            
-            KSMatrixXd w;
-            optimizer.GetIRISWieghtMat(w);
-            
-            r = w * r;
-            
+            //KSMatrixXd w = optimizer.GetIRISWieghtMat();
+            //r = w * r;
             
             return r;
         };
@@ -84,6 +79,11 @@ bool    ofTest::DoTest()
                 d(i, 0)         = -data(0,i);
                 d(i, 1)         = -1;
             }
+            
+            //KSMatrixXd w = optimizer.GetIRISWieghtMat();
+            //d.col(0) = w * d.col(0);
+            //d.col(1) = w * d.col(1);
+            
             return d;
         };
         
@@ -100,6 +100,8 @@ bool    ofTest::DoTest()
         for (int i = 0; i < numStep; ++i)
         {
             KSUtil::ofASSERT(optimizer.DoGaussNewtonStep(), "ガウス-ニュートン計算ステップに失敗しました。");
+            //KSUtil::ofASSERT(optimizer.DoGaussNewtonStepIRIS(), "ガウス-ニュートン計算ステップに失敗しました。");
+            //optimizer.UpdateIRISWeightMat();
             srsLog.push_back(optimizer.GetSquaredResidualsSum());
         }
         
@@ -114,6 +116,8 @@ bool    ofTest::DoTest()
         // 解の確認
         KSUtil::ofASSERT(fabs(optimizer.GetParamMat()(0) - 2.0) < 0.004, "パラメータ推定結果が異なります。");
         KSUtil::ofASSERT(fabs(optimizer.GetParamMat()(1) - 1.0) < 0.004, "パラメータ推定結果が異なります。");
+        
+        ofLog(OF_LOG_NOTICE, "param0:%lf, param1:%lf", optimizer.GetParamMat()(0), optimizer.GetParamMat()(1));
         
         // タイマー終了
         TS_STOP("optimization exmple 1");

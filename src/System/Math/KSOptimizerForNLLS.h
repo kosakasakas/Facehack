@@ -57,6 +57,8 @@ namespace Kosakasakas {
          */
         bool    DoGaussNewtonStep();
         
+        bool    DoGaussNewtonStepIRIS();
+        
         /**
          @brief 残差平方和の取得
          
@@ -92,12 +94,17 @@ namespace Kosakasakas {
             return m_LastResidualMat;
         }
         
-        void GetIRISWieghtMat(KSMatrixXd& dst);
+        inline const KSMatrixXd& GetIRISWieghtMat() const
+        {
+            return m_IRISWeight;
+        }
         
         void    SetLastResidualMat(KSMatrixXd& mat)
         {
             m_LastResidualMat   = mat;
         }
+        
+        void    UpdateIRISWeightMat();
         
         template <typename T, int R, int L> std::string SerializeMat(const Eigen::Matrix<T, R, L>& M){
             std::stringstream strm;
@@ -154,6 +161,9 @@ namespace Kosakasakas {
         KSMatrixXd  m_MatData;
         //! 前ステップでの残差行列
         KSMatrixXd  m_LastResidualMat;
+        KSMatrixXd  m_IRISWeight;
+        KSMatrixXd  m_WeightResidual;
+        KSMatrixXd  m_WeightJacobian;
     };
     
 } //namespace Kosakasakas {
