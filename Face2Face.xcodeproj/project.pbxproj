@@ -45,6 +45,9 @@
 /* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
+		14A109E61CBF335A008591D2 /* KSNormalEquationSolver.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = KSNormalEquationSolver.h; sourceTree = "<group>"; };
+		14A109E71CBF3508008591D2 /* KSCholeskyDecomposition.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = KSCholeskyDecomposition.h; sourceTree = "<group>"; };
+		14A109E81CBF3BB0008591D2 /* KSNESolverFactory.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = KSNESolverFactory.h; sourceTree = "<group>"; };
 		14E2ED561CB3A98B008D7B8A /* KSMath.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = KSMath.h; sourceTree = "<group>"; };
 		14E2ED571CB3AAED008D7B8A /* KSOptimizerForNLLS.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = KSOptimizerForNLLS.cpp; sourceTree = "<group>"; };
 		14E2ED5A1CB3AB92008D7B8A /* KSOptimizerForNLLS.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = KSOptimizerForNLLS.h; sourceTree = "<group>"; };
@@ -95,6 +98,9 @@
 				14E2ED671CB3B549008D7B8A /* KSTypeDef.h */,
 				14E2ED571CB3AAED008D7B8A /* KSOptimizerForNLLS.cpp */,
 				14E2ED5A1CB3AB92008D7B8A /* KSOptimizerForNLLS.h */,
+				14A109E61CBF335A008591D2 /* KSNormalEquationSolver.h */,
+				14A109E71CBF3508008591D2 /* KSCholeskyDecomposition.h */,
+				14A109E81CBF3BB0008591D2 /* KSNESolverFactory.h */,
 			);
 			path = Math;
 			sourceTree = "<group>";

@@ -27,7 +27,7 @@ void ofApp::setup(){
             testResult = pTest->DoTest();
         }
         
-        KSUtil::ofASSERT(testResult, "テストに失敗しました。");
+        ofASSERT(testResult, "テストに失敗しました。");
     }
 }
 

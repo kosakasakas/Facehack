@@ -33,6 +33,18 @@ namespace Kosakasakas {
      */
     typedef std::function<KSMatrixXd(const KSMatrixXd &x)>          KSFunction;
     
+    /**
+     @brief 正規方程式のソルバータイプ
+     正規方程式の直接解を解くソルバーで、このライブラリで指定できるソルバーです。
+     */
+    enum NESolverType
+    {
+        //! コレスキー分解
+        CHOLESKY,
+        //! 前処理付き共役勾配法
+        PCG
+    };
+    
     
 } //namespace Kosakasakas {
 

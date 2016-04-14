@@ -32,12 +32,37 @@ bool    KSOptimizerForNLLS::Initialize(KSFunction& residual,
     m_MatParam      = std::move(initParam);
     m_MatData       = std::move(data);
     m_IsInitialized = true;
+    
+    if (!m_NESolverFactory.Initialize())
+    {
+        return false;
+    }
+    m_pNESolver     = m_NESolverFactory.Create(NESolverType::CHOLESKY);
 
     return true;
 }
 
 // 最適化ステップの実行（ガウス-ニュートン法）
 bool    KSOptimizerForNLLS::DoGaussNewtonStep()
+{
+    if (!m_IsInitialized || !m_pNESolver)
+    {
+        return false;
+    }
+    
+    KSMatrixXd j    = m_FuncJacobian(m_MatParam);
+    if (j.rows() < j.cols())
+    {
+        return false;
+    }
+    
+    KSMatrixXd y    = m_FuncResidual(m_MatParam);
+    
+    return m_pNESolver->Solve(m_MatParam, y, j);
+}
+
+// IRIS最適化ステップの実行（ガウス-ニュートン法）
+bool    KSOptimizerForNLLS::DoGaussNewtonStepIRIS()
 {
     if (!m_IsInitialized)
     {
@@ -49,19 +74,17 @@ bool    KSOptimizerForNLLS::DoGaussNewtonStep()
     {
         return false;
     }
-    KSMatrixXd jt   = j.transpose();
     KSMatrixXd y    = m_FuncResidual(m_MatParam);
     
-    auto llt = (jt * j).ldlt();
-    if (llt.info()  != Eigen::Success)
+    // IRIS用のweightを算出して乗算
+    KSMatrixXd w    = y.cwiseAbs().cwiseMax(0.00001).cwiseInverse().asDiagonal();
+    for (int i=0,n=j.cols(); i<n; ++i)
     {
-        return false;
+        j.col(i) = w * j.col(i);
     }
-
-    KSMatrixXd s    = llt.solve(jt * y * -1.0);
-    m_MatParam   = m_MatParam + s;
+    y = w * y;
     
-    return true;
+    return m_pNESolver->Solve(m_MatParam, y, j);
 }
 
 // 残差平方和の取得
@@ -69,3 +92,10 @@ double KSOptimizerForNLLS::GetSquaredResidualsSum()
 {
     return fabs((m_FuncResidual(m_MatParam).transpose() * m_FuncResidual(m_MatParam))(0));
 }
+
+// 正規方程式ソルバの変更
+void    KSOptimizerForNLLS::SwitchNormalEquationSolver(NESolverType type)
+{
+    m_pNESolver = m_NESolverFactory.Create(type);
+}
+
