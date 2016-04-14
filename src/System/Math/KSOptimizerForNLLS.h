@@ -14,6 +14,8 @@
 #include "KSTypeDef.h"
 #include "memory.h"
 #include <functional>
+#include "KSNormalEquationSolver.h"
+#include "KSNESolverFactory.h"
 
 namespace Kosakasakas {
     
@@ -50,13 +52,21 @@ namespace Kosakasakas {
          @brief 最適化ステップの実行（ガウス-ニュートン法）
          
          ガウス-ニュートン法による最適化計算を行います。
-         内部では1回しか最適化計算を行わないため、アプリケーション側で複数回計算ステップを実行すると
-         精度が上がって行きます。
+         内部では1回しか最適化計算を行わないため、アプリケーション側で複数回計算ステップを実行してください。
          実行前に必ずInitializeを呼んでください。
          @return 初期化の成否
          */
         bool    DoGaussNewtonStep();
         
+        /**
+         @brief IRIS最適化ステップの実行（ガウス-ニュートン法）
+         
+         Iteratively reweighted least squaresをガウス-ニュートン法により最適化計算します。
+         重みの計算は、前ステップの解による残差の逆数を絶対値で使っています。
+         内部では1回しか最適化計算を行わないため、アプリケーション側で複数回計算ステップを実行してください。
+         実行前に必ずInitializeを呼んでください。
+         @return 初期化の成否
+         */
         bool    DoGaussNewtonStepIRIS();
         
         /**
@@ -89,66 +99,31 @@ namespace Kosakasakas {
             return m_MatData;
         }
         
-        const KSMatrixXd&   GetLastResidualMat() const
+        /**
+         @brief 正規方程式ソルバの変更
+         
+         内部で使う正規方程式のソルバを変更します.
+         デフォルトではコレスキー分解が指定されています.
+         @param type        ソルバー列挙型
+         */
+        void    SwitchNormalEquationSolver(NESolverType type);
+        
+        /**
+         @brief パラメータ行列のセット
+         
+         最適化するパラメータ行列の初期値をセットします.
+         各パラメータは内部でstd::moveされ、所有権がこのクラスに渡ってしまう点に注意して下さい.
+         @param paramMat    パラメータ行列
+         */
+        inline void SetParamMat(KSMatrixXd& paramMat)
         {
-            return m_LastResidualMat;
-        }
-        
-        inline const KSMatrixXd& GetIRISWieghtMat() const
-        {
-            return m_IRISWeight;
-        }
-        
-        void    SetLastResidualMat(KSMatrixXd& mat)
-        {
-            m_LastResidualMat   = mat;
-        }
-        
-        void    UpdateIRISWeightMat();
-        
-        template <typename T, int R, int L> std::string SerializeMat(const Eigen::Matrix<T, R, L>& M){
-            std::stringstream strm;
-            
-            // put the size of the serialized matrix
-            //strm << R << "," << L << ",";
-            
-            // put the elements of the serialized matrix
-            for(int i=0; i<R; i++){
-                for(int j=0; j<L; j++){
-                    strm << M(i,j);
-                    
-                    // separator
-                    if(!(i == R-1 && j == L-1))
-                        strm << ",";
-                }
-            }
-            
-            return strm.str();
-        }
-        
-        template <typename T> Eigen::Matrix<T, Eigen::Dynamic, Eigen::Dynamic> DeserializeMat(std::string str){
-            Eigen::Matrix<T, Eigen::Dynamic, Eigen::Dynamic> M;
-            int R, L;
-            
-            // sed "s/,/ /g" str
-            replace(str.begin(), str.end(), ',', ' ');
-            
-            std::stringstream strm(str);
-            // get the size of the output matrix
-            strm >> R >> L;
-            
-            // get the elements of the output matrix
-            M = decltype(M)(R, L);
-            for(int i=0; i<R; i++){
-                for(int j=0; j<L; j++){
-                    strm >> M(i, j);
-                }
-            }
-            
-            return M;
+            m_MatParam  = std::move(paramMat);
         }
         
     private:
+        //! 正規方程式ソルバへのシェアードポインタ
+        typedef std::shared_ptr<KSNormalEquationSolver> NESolverPtr;
+        
         //! 内部初期化されているかどうか
         bool        m_IsInitialized;
         //! 残差の関数を保持するオブジェクト
@@ -159,11 +134,11 @@ namespace Kosakasakas {
         KSMatrixXd  m_MatParam;
         //! サンプルデータマトリックスを保持するオブジェクト
         KSMatrixXd  m_MatData;
-        //! 前ステップでの残差行列
-        KSMatrixXd  m_LastResidualMat;
-        KSMatrixXd  m_IRISWeight;
-        KSMatrixXd  m_WeightResidual;
-        KSMatrixXd  m_WeightJacobian;
+        
+        //! 正規方程式ソルバのファクトリオブジェクト
+        KSNESolverFactory   m_NESolverFactory;
+        //! 正規方程式ソルバのポインタ
+        NESolverPtr         m_pNESolver;
     };
     
 } //namespace Kosakasakas {
