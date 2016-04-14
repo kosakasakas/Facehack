@@ -99,9 +99,9 @@ bool    ofTest::DoTest()
         int numStep = 5;
         for (int i = 0; i < numStep; ++i)
         {
-            KSUtil::ofASSERT(optimizer.DoGaussNewtonStep(), "ガウス-ニュートン計算ステップに失敗しました。");
+            ofASSERT(optimizer.DoGaussNewtonStep(), "ガウス-ニュートン計算ステップに失敗しました。");
             //KSUtil::ofASSERT(optimizer.DoGaussNewtonStepIRIS(), "ガウス-ニュートン計算ステップに失敗しました。");
-            //optimizer.UpdateIRISWeightMat();
+            
             srsLog.push_back(optimizer.GetSquaredResidualsSum());
         }
         
@@ -111,11 +111,11 @@ bool    ofTest::DoTest()
               srsLog[0], srsLog[1], srsLog[2], srsLog[3], srsLog[4]);
         
         // 残差平方和の確認。データ的には0になるはず。
-        KSUtil::ofASSERT(optimizer.GetSquaredResidualsSum() < 0.004, "残差平方和の収束精度が低いです。");
+        ofASSERT(optimizer.GetSquaredResidualsSum() < 0.004, "残差平方和の収束精度が低いです。");
         
         // 解の確認
-        KSUtil::ofASSERT(fabs(optimizer.GetParamMat()(0) - 2.0) < 0.004, "パラメータ推定結果が異なります。");
-        KSUtil::ofASSERT(fabs(optimizer.GetParamMat()(1) - 1.0) < 0.004, "パラメータ推定結果が異なります。");
+        ofASSERT(fabs(optimizer.GetParamMat()(0) - 2.0) < 0.004, "パラメータ推定結果が異なります。");
+        ofASSERT(fabs(optimizer.GetParamMat()(1) - 1.0) < 0.004, "パラメータ推定結果が異なります。");
         
         ofLog(OF_LOG_NOTICE, "param0:%lf, param1:%lf", optimizer.GetParamMat()(0), optimizer.GetParamMat()(1));
         
@@ -175,12 +175,12 @@ bool    ofTest::DoTest()
         // オプティマイザの初期化
         optimizer.Initialize(residual, jacobian, param, data);
         
-        KSUtil::ofASSERT((optimizer.GetSquaredResidualsSum() - 1.445) < 0.01, "残差平方和の初期値が正解と異なります。");
+        ofASSERT((optimizer.GetSquaredResidualsSum() - 1.445) < 0.01, "残差平方和の初期値が正解と異なります。");
         
         std::vector<double> srsLog;
         for (int i = 0; i < 5; ++i)
         {
-            KSUtil::ofASSERT(optimizer.DoGaussNewtonStep(), "ガウス-ニュートン計算ステップに失敗しました。");
+            ofASSERT(optimizer.DoGaussNewtonStep(), "ガウス-ニュートン計算ステップに失敗しました。");
             srsLog.push_back(optimizer.GetSquaredResidualsSum());
         }
         
@@ -189,10 +189,10 @@ bool    ofTest::DoTest()
               "step0:%lf, step1:%lf, step2:%lf, step3:%lf, step4:%lf",
               srsLog[0], srsLog[1], srsLog[2], srsLog[3], srsLog[4]);
         
-        KSUtil::ofASSERT((optimizer.GetSquaredResidualsSum() - 0.00784) < 0.01, "残差平方和の収束値が正解と異なります。");
+        ofASSERT((optimizer.GetSquaredResidualsSum() - 0.00784) < 0.01, "残差平方和の収束値が正解と異なります。");
         
-        KSUtil::ofASSERT(fabs(optimizer.GetParamMat()(0) - 0.362) < 0.01, "パラメータ推定結果が異なります。");
-        KSUtil::ofASSERT(fabs(optimizer.GetParamMat()(1) - 0.556) < 0.01, "パラメータ推定結果が異なります。");
+        ofASSERT(fabs(optimizer.GetParamMat()(0) - 0.362) < 0.01, "パラメータ推定結果が異なります。");
+        ofASSERT(fabs(optimizer.GetParamMat()(1) - 0.556) < 0.01, "パラメータ推定結果が異なります。");
         
         TS_STOP("optimization exmple 2");
     }
