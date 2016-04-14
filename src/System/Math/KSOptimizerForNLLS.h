@@ -59,7 +59,7 @@ namespace Kosakasakas {
         bool    DoGaussNewtonStep();
         
         /**
-         @brief IRIS最適化ステップの実行（ガウス-ニュートン法）
+         @brief IRLS最適化ステップの実行（ガウス-ニュートン法）
          
          Iteratively reweighted least squaresをガウス-ニュートン法により最適化計算します。
          重みの計算は、前ステップの解による残差の逆数を絶対値で使っています。
@@ -67,7 +67,7 @@ namespace Kosakasakas {
          実行前に必ずInitializeを呼んでください。
          @return 初期化の成否
          */
-        bool    DoGaussNewtonStepIRIS();
+        bool    DoGaussNewtonStepIRLS();
         
         /**
          @brief 残差平方和の取得
