@@ -110,11 +110,11 @@ bool    ofTest::DoTest()
         param1 << 5.0, 5.0;
         optimizer.SetParamMat(param1);
         
-        // 計算開始(IRIS計算)
+        // 計算開始(IRLS計算)
         TS_START("optimization exmple 1-2");
         for (int i = 0; i < numStep; ++i)
         {
-            if (!optimizer.DoGaussNewtonStepIRIS())
+            if (!optimizer.DoGaussNewtonStepIRLS())
             {
                 ofLog(OF_LOG_ERROR, "ガウス-ニュートン計算ステップに失敗しました。");
                 return false;
@@ -133,7 +133,7 @@ bool    ofTest::DoTest()
         // [notice ] ex1-1: param0: 1.996821, param1: 1.000021
         // [notice ] ex1-2: param0: 2.000000, param1: 1.000000
         //
-        // IRISの方が誤差を含むデータに対して高精度な解が得られる。
+        // IRLSの方が誤差を含むデータに対して高精度な解が得られる。
         // ただし、0.1msほど計算が遅い。
         // ================================
 

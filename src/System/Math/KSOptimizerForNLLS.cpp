@@ -61,8 +61,8 @@ bool    KSOptimizerForNLLS::DoGaussNewtonStep()
     return m_pNESolver->Solve(m_MatParam, y, j);
 }
 
-// IRIS最適化ステップの実行（ガウス-ニュートン法）
-bool    KSOptimizerForNLLS::DoGaussNewtonStepIRIS()
+// IRLS最適化ステップの実行（ガウス-ニュートン法）
+bool    KSOptimizerForNLLS::DoGaussNewtonStepIRLS()
 {
     if (!m_IsInitialized)
     {
@@ -76,7 +76,7 @@ bool    KSOptimizerForNLLS::DoGaussNewtonStepIRIS()
     }
     KSMatrixXd y    = m_FuncResidual(m_MatParam);
     
-    // IRIS用のweightを算出して乗算
+    // IRLS用のweightを算出して乗算
     KSMatrixXd w    = y.cwiseAbs().cwiseMax(0.00001).cwiseInverse().asDiagonal();
     for (int i=0,n=j.cols(); i<n; ++i)
     {
