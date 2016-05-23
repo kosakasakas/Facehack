@@ -13,5 +13,6 @@
 
 #include "KSTypeDef.h"
 #include "KSDenseOptimizer.h"
+#include "KSSparseOptimizer.h"
 
 #endif /* KSMath_h */

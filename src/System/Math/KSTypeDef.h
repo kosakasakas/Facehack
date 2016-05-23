@@ -12,6 +12,7 @@
 #define KSTypeDef_h
 
 #include "../../../extAddons/Eigen/Dense"
+#include "../../../extAddons/Eigen/SparseCore"
 
 namespace Kosakasakas {
 
@@ -22,16 +23,34 @@ namespace Kosakasakas {
     typedef Eigen::Matrix<double, Eigen::Dynamic, Eigen::Dynamic>   KSMatrixXd;
     
     /**
+     @brief double精度の任意要素スパースマトリックス
+     現状最適化処理専用で、Eigenラップしただけです。
+     */
+    typedef Eigen::SparseMatrix<double>                             KSMatrixSparsed;
+    
+    /**
      @brief double精度の任意要素ベクトル
      現状最適化処理専用で、Eigenラップしただけです。
      */
     typedef Eigen::Matrix<double, Eigen::Dynamic, 1>                KSVectorXd;
     
     /**
+     @brief double精度の任意要素スパースベクトル
+     現状最適化処理専用で、Eigenラップしただけです。
+     */
+    typedef Eigen::SparseVector<double>                             KSVectorSparsed;
+    
+    /**
      @brief マトリックス引数の任意ファンクタ
      現状最適化処理専用です。
      */
-    typedef std::function<KSMatrixXd(const KSMatrixXd &x)>          KSFunction;
+    typedef std::function<KSMatrixXd(const KSMatrixXd &x)>              KSFunction;
+    
+    /**
+     @brief スパースマトリックス引数の任意ファンクタ
+     現状最適化処理専用です。
+     */
+    typedef std::function<KSMatrixSparsed(const KSMatrixSparsed &x)>    KSFunctionSparse;
     
     /**
      @brief 正規方程式のソルバータイプ

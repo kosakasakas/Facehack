@@ -12,6 +12,7 @@
 #define KSCholeskyDecomposition_h
 
 #include "KSNormalEquationSolver.h"
+#include "../../../extAddons/Eigen/SparseCholesky"
 
 namespace Kosakasakas {
     
@@ -63,6 +64,34 @@ namespace Kosakasakas {
             dst             = dst + s;
             return true;
         };
+        
+        /**
+         @brief 計算実行
+         
+         実際に計算を行う関数です.
+         コレスキー分解により正規方程式を解きます.
+         @param dst     出力パラメータ行列
+         @param y       残差関数
+         @param j       残差関数のヤコビアン
+         @return 計算の成否
+         */
+        inline bool Solve(KSMatrixSparsed& dst, KSMatrixSparsed& y, KSMatrixSparsed& j)
+        {
+            KSMatrixSparsed jt  = j.transpose();
+            KSMatrixSparsed A   = jt * j;
+            KSMatrixSparsed b   = jt * y * -1.0;
+            Eigen::SimplicialLLT<KSMatrixSparsed> solver;
+            solver.compute(A);
+            if(solver.info()!=Eigen::Success)
+            {
+                return false;
+            }
+            
+            KSMatrixSparsed s   = solver.solve(b);
+            dst                 = dst + s;
+            return true;
+        };
+
     };
     
 } //namespace Kosakasakas {

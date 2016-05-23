@@ -142,14 +142,14 @@ bool    ofTest::DoTest()
     // 例題No.2
     {
         // ==================================
-        // 以下の例題を解く
+        // wikiの例題を解く
         // https://en.wikipedia.org/wiki/Gauss%E2%80%93Newton_algorithm
         // ==================================
-    
+        
         // データセットを登録
         KSMatrixXd  data(2, 7);
         data <<  0.038, 0.194, 0.425, 0.626,  1.253,  2.500,  3.740,
-                    0.050, 0.127, 0.094, 0.2122, 0.2729, 0.2665, 0.3317;
+        0.050, 0.127, 0.094, 0.2122, 0.2729, 0.2665, 0.3317;
         
         // オプティマイザの宣言
         KSDenseOptimizer  optimizer;
@@ -218,6 +218,91 @@ bool    ofTest::DoTest()
         // 残差平方和はステップごとに縮まっていて、
         // wikiの正解値である0.00784と同値(0.007844)が得られる。
         // ================================
+    }
+    
+    // 例題No.3
+    {
+        // ==================================
+        // 例題No.2と同じ問題をSparse行列で解く
+        // ==================================
+    
+        // データセットを登録
+        KSMatrixSparsed  data(2, 7);
+        data.insert(0, 0) = 0.038;
+        data.insert(0, 1) = 0.194;
+        data.insert(0, 2) = 0.425;
+        data.insert(0, 3) = 0.626;
+        data.insert(0, 4) = 1.253;
+        data.insert(0, 5) = 2.500;
+        data.insert(0, 6) = 3.740;
+        data.insert(1, 0) = 0.050;
+        data.insert(1, 1) = 0.127;
+        data.insert(1, 2) = 0.094;
+        data.insert(1, 3) = 0.2122;
+        data.insert(1, 4) = 0.2729;
+        data.insert(1, 5) = 0.2665;
+        data.insert(1, 6) = 0.3317;
+        
+        // オプティマイザの宣言
+        KSSparseOptimizer  optimizer;
+        
+        // 残差関数
+        KSFunctionSparse  residual    = [&optimizer](const KSMatrixSparsed &x)->KSMatrixSparsed
+        {
+            const KSMatrixSparsed& data = optimizer.GetDataMat();
+            KSMatrixSparsed y(data.cols(), 1);
+            
+            for(int i=0, n=y.rows(); i<n; ++i)
+            {
+                y.coeffRef(i, 0) = data.coeff(1, i) - (x.coeff(0, 0) * data.coeff(0, i)) / (x.coeff(1, 0) + data.coeff(0,i));
+            }
+            return y;
+        };
+        
+        // 残差のヤコビアン
+        KSFunctionSparse jacobian     = [&optimizer](const KSMatrixSparsed &x)->KSMatrixSparsed
+        {
+            const KSMatrixSparsed& data = optimizer.GetDataMat();
+            KSMatrixSparsed d(data.cols(), x.rows());
+            
+            for(int i=0,n=d.rows(); i<n; ++i)
+            {
+                double denom    = (x.coeff(1, 0) + data.coeff(0,i)) * (x.coeff(1, 0) + data.coeff(0,i));
+                d.coeffRef(i, 0)         = -data.coeff(0,i) / (x.coeff(1, 0) + data.coeff(0,i));
+                d.coeffRef(i, 1)         = (x.coeff(1, 0) * data.coeff(0, i)) / denom;
+            }
+            return d;
+        };
+        
+        // 正解値マトリックスの初期値を設定
+        KSMatrixSparsed param(2,1);
+        param.insert(0, 0) = 0.9;
+        param.insert(1, 0) = 0.2;
+        
+        // オプティマイザの初期化
+        optimizer.Initialize(residual, jacobian, param, data);
+        
+        ofASSERT((optimizer.GetSquaredResidualsSum() - 1.445) < 0.01, "残差平方和の初期値が正解と異なります。");
+        
+        std::vector<double> srsLog;
+        
+        TS_START("optimization exmple 3");
+        for (int i = 0; i < 5; ++i)
+        {
+            ofASSERT(optimizer.DoGaussNewtonStep(), "ガウス-ニュートン計算ステップに失敗しました。");
+            srsLog.push_back(optimizer.GetSquaredResidualsSum());
+        }
+        TS_STOP("optimization exmple 3");
+        
+        //各ステップでの残差平方和
+        ofLog(OF_LOG_NOTICE,
+              "step0:%lf, step1:%lf, step2:%lf, step3:%lf, step4:%lf",
+              srsLog[0], srsLog[1], srsLog[2], srsLog[3], srsLog[4]);
+        
+        ofASSERT((optimizer.GetSquaredResidualsSum() - 0.00784) < 0.01, "残差平方和の収束値が正解と異なります。");
+        
+        ofASSERT(fabs(optimizer.GetParamMat().coeff(0, 0) - 0.362) < 0.01, "パラメータ推定結果が異なります。");
+        ofASSERT(fabs(optimizer.GetParamMat().coeff(1, 0) - 0.556) < 0.01, "パラメータ推定結果が異なります。");
     }
     
     return true;
