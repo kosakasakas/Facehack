@@ -1,5 +1,5 @@
 //
-//  KSOptimizerForNLLS.h
+//  KSDenseOptimizer.h
 //
 //  非線形最小二乗問題のための最適化計算クラス
 //
@@ -8,8 +8,8 @@
 //
 //
 
-#ifndef KSOptimizerForNLLS_h
-#define KSOptimizerForNLLS_h
+#ifndef KSDenseOptimizer_h
+#define KSDenseOptimizer_h
 
 #include "KSTypeDef.h"
 #include "memory.h"
@@ -24,13 +24,13 @@ namespace Kosakasakas {
             線形問題も扱えます。
             ソルバにはガウス-ニュートン法を用います。
     */
-    class KSOptimizerForNLLS
+    class KSDenseOptimizer
     {
     public:
         //! コンストラクタ
-        KSOptimizerForNLLS();
+        KSDenseOptimizer();
         //! デストラクタ
-        ~KSOptimizerForNLLS();
+        ~KSDenseOptimizer();
         
         /**
          @brief 初期化
@@ -143,4 +143,4 @@ namespace Kosakasakas {
     
 } //namespace Kosakasakas {
 
-#endif /* KSOptimizerForNLLS_h */
+#endif /* KSDenseOptimizer_h */

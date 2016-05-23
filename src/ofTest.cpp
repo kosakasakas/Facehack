@@ -43,7 +43,7 @@ bool    ofTest::DoTest()
                 1.02, 1.08, 1.16, 1.24, 1.32;
         
         // オプティマイザの宣言
-        KSOptimizerForNLLS  optimizer;
+        KSDenseOptimizer  optimizer;
         
         // 残差関数
         KSFunction  residual    = [&optimizer](const KSMatrixXd &x)->KSMatrixXd
@@ -152,7 +152,7 @@ bool    ofTest::DoTest()
                     0.050, 0.127, 0.094, 0.2122, 0.2729, 0.2665, 0.3317;
         
         // オプティマイザの宣言
-        KSOptimizerForNLLS  optimizer;
+        KSDenseOptimizer  optimizer;
         
         // 残差関数
         KSFunction  residual    = [&optimizer](const KSMatrixXd &x)->KSMatrixXd

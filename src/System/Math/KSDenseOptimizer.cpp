@@ -1,5 +1,5 @@
 //
-//  KSOptimizerForNLLS.h
+//  KSDenseOptimizer.h
 //
 //  非線形最小二乗問題のための最適化計算クラス
 //
@@ -8,21 +8,21 @@
 //
 //
 
-#include "KSOptimizerForNLLS.h"
+#include "KSDenseOptimizer.h"
 
 using namespace Kosakasakas;
 
 // コンストラクタ
-KSOptimizerForNLLS::KSOptimizerForNLLS()
+KSDenseOptimizer::KSDenseOptimizer()
 : m_IsInitialized(false)
 {}
 
 // デストラクタ
-KSOptimizerForNLLS::~KSOptimizerForNLLS()
+KSDenseOptimizer::~KSDenseOptimizer()
 {}
 
 // 初期化
-bool    KSOptimizerForNLLS::Initialize(KSFunction& residual,
+bool    KSDenseOptimizer::Initialize(KSFunction& residual,
                                        KSFunction& jaconian,
                                        KSMatrixXd& initParam,
                                        KSMatrixXd& data)
@@ -43,7 +43,7 @@ bool    KSOptimizerForNLLS::Initialize(KSFunction& residual,
 }
 
 // 最適化ステップの実行（ガウス-ニュートン法）
-bool    KSOptimizerForNLLS::DoGaussNewtonStep()
+bool    KSDenseOptimizer::DoGaussNewtonStep()
 {
     if (!m_IsInitialized || !m_pNESolver)
     {
@@ -62,7 +62,7 @@ bool    KSOptimizerForNLLS::DoGaussNewtonStep()
 }
 
 // IRLS最適化ステップの実行（ガウス-ニュートン法）
-bool    KSOptimizerForNLLS::DoGaussNewtonStepIRLS()
+bool    KSDenseOptimizer::DoGaussNewtonStepIRLS()
 {
     if (!m_IsInitialized)
     {
@@ -88,13 +88,13 @@ bool    KSOptimizerForNLLS::DoGaussNewtonStepIRLS()
 }
 
 // 残差平方和の取得
-double KSOptimizerForNLLS::GetSquaredResidualsSum()
+double KSDenseOptimizer::GetSquaredResidualsSum()
 {
     return fabs((m_FuncResidual(m_MatParam).transpose() * m_FuncResidual(m_MatParam))(0));
 }
 
 // 正規方程式ソルバの変更
-void    KSOptimizerForNLLS::SwitchNormalEquationSolver(NESolverType type)
+void    KSDenseOptimizer::SwitchNormalEquationSolver(NESolverType type)
 {
     m_pNESolver = m_NESolverFactory.Create(type);
 }
