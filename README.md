@@ -1,7 +1,3 @@
-# fuga
-# hoge
-# piyo
-
 # 概要
 最新論文を追実装してみようという試み
 
@@ -29,3 +25,7 @@ openFrameworks v0.9.3
 
 gitignoreの自動生成ツール
 [gitignore.io](https://www.gitignore.io/)
+
+# ライセンス
+このソフトウェアは、[Mozilla Public License Version 2.0](http://mozilla.org/MPL/2.0/)ライセンスで公開しています。
+
