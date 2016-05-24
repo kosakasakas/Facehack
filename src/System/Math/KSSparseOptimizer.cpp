@@ -17,6 +17,8 @@ using namespace Kosakasakas;
 // コンストラクタ
 KSSparseOptimizer::KSSparseOptimizer()
 : m_IsInitialized(false)
+, m_pNESolver(nullptr)
+, m_MaxIterations(4)
 {}
 
 // デストラクタ
@@ -39,7 +41,11 @@ bool    KSSparseOptimizer::Initialize(KSFunctionSparse& residual,
     {
         return false;
     }
-    m_pNESolver     = m_NESolverFactory.Create(NESolverType::CHOLESKY);
+    
+    if (!m_pNESolver)
+    {
+        m_pNESolver     = m_NESolverFactory.Create(NESolverType::CHOLESKY);
+    }
     
     return true;
 }
@@ -60,7 +66,7 @@ bool    KSSparseOptimizer::DoGaussNewtonStep()
     
     KSMatrixSparsed y    = m_FuncResidual(m_MatParam);
     
-    return m_pNESolver->Solve(m_MatParam, y, j);
+    return m_pNESolver->Solve(m_MatParam, y, j, m_MaxIterations);
 }
 
 // IRLS最適化ステップの実行（ガウス-ニュートン法）
@@ -87,7 +93,7 @@ bool    KSSparseOptimizer::DoGaussNewtonStepIRLS()
     }
     y = w * y;
     
-    return m_pNESolver->Solve(m_MatParam, y, j);
+    return m_pNESolver->Solve(m_MatParam, y, j, m_MaxIterations);
 }
 
 // 残差平方和の取得

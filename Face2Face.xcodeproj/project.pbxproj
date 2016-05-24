@@ -46,6 +46,7 @@
 /* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
+		14418B911CF4415300E5E266 /* KSConjugateGradient.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = KSConjugateGradient.h; sourceTree = "<group>"; };
 		14A109E61CBF335A008591D2 /* KSNormalEquationSolver.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = KSNormalEquationSolver.h; sourceTree = "<group>"; };
 		14A109E71CBF3508008591D2 /* KSCholeskyDecomposition.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = KSCholeskyDecomposition.h; sourceTree = "<group>"; };
 		14A109E81CBF3BB0008591D2 /* KSNESolverFactory.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = KSNESolverFactory.h; sourceTree = "<group>"; };
@@ -105,6 +106,7 @@
 				F803D4741CF351DC003579DA /* KSSparseOptimizer.h */,
 				14A109E61CBF335A008591D2 /* KSNormalEquationSolver.h */,
 				14A109E71CBF3508008591D2 /* KSCholeskyDecomposition.h */,
+				14418B911CF4415300E5E266 /* KSConjugateGradient.h */,
 				14A109E81CBF3BB0008591D2 /* KSNESolverFactory.h */,
 			);
 			path = Math;

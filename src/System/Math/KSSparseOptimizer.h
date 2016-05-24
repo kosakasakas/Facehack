@@ -122,6 +122,19 @@ namespace Kosakasakas {
             m_MatParam  = std::move(paramMat);
         }
         
+        /**
+         @brief ソルバ試行回数のセット
+         
+         正規方程式ソルバの試行回数の最大値をセットします.
+         指定した回数以下で解が収束した場合はその時点で終了します.
+         @param iterations  試行回数
+         */
+        inline void SetMaxIterations(int iterations)
+        {
+            m_MaxIterations = iterations;
+        }
+        
+
     private:
         //! 正規方程式ソルバへのシェアードポインタ
         typedef std::shared_ptr<KSNormalEquationSolver> NESolverPtr;
@@ -141,6 +154,8 @@ namespace Kosakasakas {
         KSNESolverFactory   m_NESolverFactory;
         //! 正規方程式ソルバのポインタ
         NESolverPtr         m_pNESolver;
+        //! 正規方程式を解く試行回数
+        int m_MaxIterations;
     };
     
 } //namespace Kosakasakas {

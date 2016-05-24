@@ -1,20 +1,22 @@
 //
-//  KSCholeskyDecomposition.h
+//  KSConjugateGradient.h
 //
-//  正規方程式のコレスキー分解によるソルバ
+//  正規方程式の共役勾配法によるソルバ
 //
 //  Copyright (c) 2016年 Takahiro Kosaka. All rights reserved.
-//  Created by Takahiro Kosaka on 2016/04/14.
+//  Created by Takahiro Kosaka on 2016/05/24.
 //
 //  This Source Code Form is subject to the terms of the Mozilla
 //  Public License v. 2.0. If a copy of the MPL was not distributed
 //  with this file, You can obtain one at http://mozilla.org/MPL/2.0/.
 
-#ifndef KSCholeskyDecomposition_h
-#define KSCholeskyDecomposition_h
+#ifndef KSConjugateGradient_h
+#define KSConjugateGradient_h
 
 #include "KSNormalEquationSolver.h"
 #include "../../../extAddons/Eigen/SparseCholesky"
+#include "../../../extAddons/Eigen/IterativeLinearSolvers"
+
 
 namespace Kosakasakas {
     
@@ -22,15 +24,15 @@ namespace Kosakasakas {
      @brief 正規方程式のコレスキー分解によるソルバ
      正規方程式をコレスキー分解により解くクラスです.
      */
-    class KSCholeskyDecomposition : public KSNormalEquationSolver
+    class KSConjugateGradient : public KSNormalEquationSolver
     {
     public:
         //! コンストラクタ
-        KSCholeskyDecomposition()
+        KSConjugateGradient()
         {};
         
         //! デストラクタ
-        virtual ~KSCholeskyDecomposition()
+        virtual ~KSConjugateGradient()
         {};
         
         //! 初期化
@@ -51,21 +53,12 @@ namespace Kosakasakas {
          @param dst     出力パラメータ行列
          @param y       残差関数
          @param j       残差関数のヤコビアン
-         @param maxIterations   演算の試行回数(本手法ではこのパラメータは意味は無い)
          @return 計算の成否
          */
         inline bool Solve(KSMatrixXd& dst, KSMatrixXd& y, KSMatrixXd& j, int maxIterations)
         {
-            KSMatrixXd jt   = j.transpose();
-            auto llt        = (jt * j).ldlt();
-            if (llt.info()  != Eigen::Success)
-            {
-                return false;
-            }
-            
-            KSMatrixXd s    = llt.solve(jt * y * -1.0);
-            dst             = dst + s;
-            return true;
+            // Denseを使う予定ないので一旦保留
+            return false;
         };
         
         /**
@@ -76,7 +69,6 @@ namespace Kosakasakas {
          @param dst     出力パラメータ行列
          @param y       残差関数
          @param j       残差関数のヤコビアン
-         @param maxIterations   演算の試行回数(本手法ではこのパラメータは意味は無い)
          @return 計算の成否
          */
         inline bool Solve(KSMatrixSparsed& dst, KSMatrixSparsed& y, KSMatrixSparsed& j, int maxIterations)
@@ -84,21 +76,22 @@ namespace Kosakasakas {
             KSMatrixSparsed jt  = j.transpose();
             KSMatrixSparsed A   = jt * j;
             KSMatrixSparsed b   = jt * y * -1.0;
-            Eigen::SimplicialLLT<KSMatrixSparsed> solver;
+            Eigen::ConjugateGradient<KSMatrixSparsed> solver;
             solver.compute(A);
             if(solver.info()!=Eigen::Success)
             {
                 return false;
             }
-            
+            solver.setMaxIterations(maxIterations);
             KSMatrixSparsed s   = solver.solve(b);
             dst                 = dst + s;
             return true;
         };
-
+        
     };
     
 } //namespace Kosakasakas {
 
 
-#endif /* KSCholeskyDecomposition_h */
+
+#endif /* KSConjugateGradient_h */

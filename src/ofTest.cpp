@@ -225,7 +225,8 @@ bool    ofTest::DoTest()
     // 例題No.3
     {
         // ==================================
-        // 例題No.2と同じ問題をSparse行列で解く
+        // 例題No.2と同じ問題をSparse行列を使い、
+        // 前処理付き共役勾配法を使って解く
         // ==================================
     
         // データセットを登録
@@ -247,6 +248,12 @@ bool    ofTest::DoTest()
         
         // オプティマイザの宣言
         KSSparseOptimizer  optimizer;
+        
+        // ソルバを前処理付き共役勾配法(PGC)に変更
+        optimizer.SwitchNormalEquationSolver(NESolverType::PCG);
+        
+        // PGCの試行回数のセット
+        optimizer.SetMaxIterations(4);
         
         // 残差関数
         KSFunctionSparse  residual    = [&optimizer](const KSMatrixSparsed &x)->KSMatrixSparsed

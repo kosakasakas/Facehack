@@ -40,9 +40,10 @@ namespace Kosakasakas {
          @param dst     出力パラメータ行列
          @param y       残差関数
          @param j       残差関数のヤコビアン
+         @param maxIterations   演算の試行回数
          @return 計算の成否
          */
-        virtual bool    Solve(KSMatrixXd& dst, KSMatrixXd& y, KSMatrixXd& j) = 0;
+        virtual bool    Solve(KSMatrixXd& dst, KSMatrixXd& y, KSMatrixXd& j, int maxIterations) = 0;
         
         /**
          @brief 計算実行
@@ -52,9 +53,10 @@ namespace Kosakasakas {
          @param dst     出力パラメータ行列
          @param y       残差関数
          @param j       残差関数のヤコビアン
+         @param maxIterations   演算の試行回数
          @return 計算の成否
          */
-        virtual bool    Solve(KSMatrixSparsed& dst, KSMatrixSparsed& y, KSMatrixSparsed& j) = 0;
+        virtual bool    Solve(KSMatrixSparsed& dst, KSMatrixSparsed& y, KSMatrixSparsed& j, int maxIterations) = 0;
     };
     
 } //namespace Kosakasakas {
