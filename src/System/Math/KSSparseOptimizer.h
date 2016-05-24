@@ -1,17 +1,17 @@
 //
-//  KSOptimizerForNLLS.h
+//  KSSparseOptimizer.h
 //
-//  非線形最小二乗問題のための最適化計算クラス
+//  スパース行列による非線形最小二乗問題のための最適化計算クラス
 //
 //  Copyright (c) 2016年 Takahiro Kosaka. All rights reserved.
-//  Created by Takahiro Kosaka on 2016/04/05.
+//  Created by Takahiro Kosaka on 2016/05/23.
 //
 //  This Source Code Form is subject to the terms of the Mozilla
 //  Public License v. 2.0. If a copy of the MPL was not distributed
 //  with this file, You can obtain one at http://mozilla.org/MPL/2.0/.
 
-#ifndef KSOptimizerForNLLS_h
-#define KSOptimizerForNLLS_h
+#ifndef __Face2Face__KSSparseOptimizer__
+#define __Face2Face__KSSparseOptimizer__
 
 #include "KSTypeDef.h"
 #include "memory.h"
@@ -23,16 +23,16 @@ namespace Kosakasakas {
     
     /**
      @brief 非線形最小二乗問題を扱うための最適化計算クラスです。
-            線形問題も扱えます。
-            ソルバにはガウス-ニュートン法を用います。
-    */
-    class KSOptimizerForNLLS
+     線形問題も扱えます。
+     ソルバにはガウス-ニュートン法を用います。
+     */
+    class KSSparseOptimizer
     {
     public:
         //! コンストラクタ
-        KSOptimizerForNLLS();
+        KSSparseOptimizer();
         //! デストラクタ
-        ~KSOptimizerForNLLS();
+        ~KSSparseOptimizer();
         
         /**
          @brief 初期化
@@ -45,10 +45,10 @@ namespace Kosakasakas {
          @param data        サンプルデータマトリック
          @return 初期化の成否
          */
-        bool    Initialize(KSFunction& residual,
-                           KSFunction& jaconian,
-                           KSMatrixXd& initParam,
-                           KSMatrixXd& data);
+        bool    Initialize(KSFunctionSparse& residual,
+                           KSFunctionSparse& jaconian,
+                           KSMatrixSparsed& initParam,
+                           KSMatrixSparsed& data);
         
         /**
          @brief 最適化ステップの実行（ガウス-ニュートン法）
@@ -85,7 +85,7 @@ namespace Kosakasakas {
          現在のパラメータマトリックスを取得します。
          @return パラメータマトリックス
          */
-        inline const KSMatrixXd&    GetParamMat() const
+        inline const KSMatrixSparsed&    GetParamMat() const
         {
             return m_MatParam;
         }
@@ -96,7 +96,7 @@ namespace Kosakasakas {
          サンプルデータマトリックスを取得します。
          @return パラメータマトリックス
          */
-        inline const KSMatrixXd&    GetDataMat() const
+        inline const KSMatrixSparsed&    GetDataMat() const
         {
             return m_MatData;
         }
@@ -117,11 +117,24 @@ namespace Kosakasakas {
          各パラメータは内部でstd::moveされ、所有権がこのクラスに渡ってしまう点に注意して下さい.
          @param paramMat    パラメータ行列
          */
-        inline void SetParamMat(KSMatrixXd& paramMat)
+        inline void SetParamMat(KSMatrixSparsed& paramMat)
         {
             m_MatParam  = std::move(paramMat);
         }
         
+        /**
+         @brief ソルバ試行回数のセット
+         
+         正規方程式ソルバの試行回数の最大値をセットします.
+         指定した回数以下で解が収束した場合はその時点で終了します.
+         @param iterations  試行回数
+         */
+        inline void SetMaxIterations(int iterations)
+        {
+            m_MaxIterations = iterations;
+        }
+        
+
     private:
         //! 正規方程式ソルバへのシェアードポインタ
         typedef std::shared_ptr<KSNormalEquationSolver> NESolverPtr;
@@ -129,20 +142,23 @@ namespace Kosakasakas {
         //! 内部初期化されているかどうか
         bool        m_IsInitialized;
         //! 残差の関数を保持するオブジェクト
-        KSFunction  m_FuncResidual;
+        KSFunctionSparse  m_FuncResidual;
         //! 残差のヤコビアンを保持するオブジェクト
-        KSFunction  m_FuncJacobian;
+        KSFunctionSparse  m_FuncJacobian;
         //! パラメータマトリックスを保持するオブジェクト
-        KSMatrixXd  m_MatParam;
+        KSMatrixSparsed  m_MatParam;
         //! サンプルデータマトリックスを保持するオブジェクト
-        KSMatrixXd  m_MatData;
+        KSMatrixSparsed  m_MatData;
         
         //! 正規方程式ソルバのファクトリオブジェクト
         KSNESolverFactory   m_NESolverFactory;
         //! 正規方程式ソルバのポインタ
         NESolverPtr         m_pNESolver;
+        //! 正規方程式を解く試行回数
+        int m_MaxIterations;
     };
     
 } //namespace Kosakasakas {
 
-#endif /* KSOptimizerForNLLS_h */
+
+#endif /* defined(__Face2Face__KSSparseOptimizer__) */

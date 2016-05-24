@@ -14,6 +14,7 @@
 #define KSMath_h
 
 #include "KSTypeDef.h"
-#include "KSOptimizerForNLLS.h"
+#include "KSDenseOptimizer.h"
+#include "KSSparseOptimizer.h"
 
 #endif /* KSMath_h */

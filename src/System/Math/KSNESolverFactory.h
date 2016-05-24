@@ -16,6 +16,7 @@
 #include "KSTypeDef.h"
 #include "KSNormalEquationSolver.h"
 #include "KSCholeskyDecomposition.h"
+#include "KSConjugateGradient.h"
 #include "memory.h"
 
 namespace Kosakasakas {
@@ -59,6 +60,10 @@ namespace Kosakasakas {
             switch (type) {
                 case NESolverType::CHOLESKY:
                     pSolver = std::make_shared<KSCholeskyDecomposition>();
+                    break;
+                    
+                case NESolverType::PCG:
+                    pSolver = std::make_shared<KSConjugateGradient>();
                     break;
                     
                 default:

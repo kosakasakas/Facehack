@@ -1,5 +1,5 @@
 //
-//  KSOptimizerForNLLS.h
+//  KSDenseOptimizer.h
 //
 //  非線形最小二乗問題のための最適化計算クラス
 //
@@ -10,21 +10,23 @@
 //  Public License v. 2.0. If a copy of the MPL was not distributed
 //  with this file, You can obtain one at http://mozilla.org/MPL/2.0/.
 
-#include "KSOptimizerForNLLS.h"
+#include "KSDenseOptimizer.h"
 
 using namespace Kosakasakas;
 
 // コンストラクタ
-KSOptimizerForNLLS::KSOptimizerForNLLS()
+KSDenseOptimizer::KSDenseOptimizer()
 : m_IsInitialized(false)
+, m_pNESolver(nullptr)
+, m_MaxIterations(4)
 {}
 
 // デストラクタ
-KSOptimizerForNLLS::~KSOptimizerForNLLS()
+KSDenseOptimizer::~KSDenseOptimizer()
 {}
 
 // 初期化
-bool    KSOptimizerForNLLS::Initialize(KSFunction& residual,
+bool    KSDenseOptimizer::Initialize(KSFunction& residual,
                                        KSFunction& jaconian,
                                        KSMatrixXd& initParam,
                                        KSMatrixXd& data)
@@ -39,13 +41,17 @@ bool    KSOptimizerForNLLS::Initialize(KSFunction& residual,
     {
         return false;
     }
-    m_pNESolver     = m_NESolverFactory.Create(NESolverType::CHOLESKY);
+    
+    if (!m_pNESolver)
+    {
+        m_pNESolver     = m_NESolverFactory.Create(NESolverType::CHOLESKY);
+    }
 
     return true;
 }
 
 // 最適化ステップの実行（ガウス-ニュートン法）
-bool    KSOptimizerForNLLS::DoGaussNewtonStep()
+bool    KSDenseOptimizer::DoGaussNewtonStep()
 {
     if (!m_IsInitialized || !m_pNESolver)
     {
@@ -60,11 +66,11 @@ bool    KSOptimizerForNLLS::DoGaussNewtonStep()
     
     KSMatrixXd y    = m_FuncResidual(m_MatParam);
     
-    return m_pNESolver->Solve(m_MatParam, y, j);
+    return m_pNESolver->Solve(m_MatParam, y, j, m_MaxIterations);
 }
 
 // IRLS最適化ステップの実行（ガウス-ニュートン法）
-bool    KSOptimizerForNLLS::DoGaussNewtonStepIRLS()
+bool    KSDenseOptimizer::DoGaussNewtonStepIRLS()
 {
     if (!m_IsInitialized)
     {
@@ -79,24 +85,24 @@ bool    KSOptimizerForNLLS::DoGaussNewtonStepIRLS()
     KSMatrixXd y    = m_FuncResidual(m_MatParam);
     
     // IRLS用のweightを算出して乗算
-    KSMatrixXd w    = y.cwiseAbs().cwiseMax(0.00001).cwiseInverse().asDiagonal();
+    KSMatrixXd w    = y.col(0).cwiseAbs().cwiseMax(0.00001).cwiseInverse().asDiagonal();
     for (int i=0,n=j.cols(); i<n; ++i)
     {
         j.col(i) = w * j.col(i);
     }
     y = w * y;
     
-    return m_pNESolver->Solve(m_MatParam, y, j);
+    return m_pNESolver->Solve(m_MatParam, y, j, m_MaxIterations);
 }
 
 // 残差平方和の取得
-double KSOptimizerForNLLS::GetSquaredResidualsSum()
+double KSDenseOptimizer::GetSquaredResidualsSum()
 {
     return fabs((m_FuncResidual(m_MatParam).transpose() * m_FuncResidual(m_MatParam))(0));
 }
 
 // 正規方程式ソルバの変更
-void    KSOptimizerForNLLS::SwitchNormalEquationSolver(NESolverType type)
+void    KSDenseOptimizer::SwitchNormalEquationSolver(NESolverType type)
 {
     m_pNESolver = m_NESolverFactory.Create(type);
 }
