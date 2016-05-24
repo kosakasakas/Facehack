@@ -1,10 +1,14 @@
 //
 //  KSSparseOptimizer.h
-//  Face2Face
 //
-//  Created by 小坂 昂大 on 2016/05/23.
+//  スパース行列による非線形最小二乗問題のための最適化計算クラス
 //
+//  Copyright (c) 2016年 Takahiro Kosaka. All rights reserved.
+//  Created by Takahiro Kosaka on 2016/05/23.
 //
+//  This Source Code Form is subject to the terms of the Mozilla
+//  Public License v. 2.0. If a copy of the MPL was not distributed
+//  with this file, You can obtain one at http://mozilla.org/MPL/2.0/.
 
 #ifndef __Face2Face__KSSparseOptimizer__
 #define __Face2Face__KSSparseOptimizer__
