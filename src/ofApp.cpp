@@ -8,9 +8,9 @@ using namespace std;
 //--------------------------------------------------------------
 void ofApp::setup(){
     // ==================================
-    // フレームレートの設定。とりあえず上限なし
+    // フレームレートの設定。
     // ==================================
-    float frameRate = 0.0f;
+    float frameRate = 60.0f;
     ofSetVerticalSync(false);
     ofSetFrameRate(frameRate);
     TIME_SAMPLE_SET_FRAMERATE(frameRate);
