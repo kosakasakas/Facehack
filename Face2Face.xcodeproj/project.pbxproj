@@ -267,12 +267,12 @@
 		E4B69E1C0A3A1BDC003C02F2 /* src */ = {
 			isa = PBXGroup;
 			children = (
-				F8C766601CFDD781006D373E /* ofTest.h */,
 				F8C766611CFDD781006D373E /* main.cpp */,
 				F8C766621CFDD781006D373E /* ofApp.h */,
-				F8C766631CFDD781006D373E /* ofxFaceBlender */,
 				F8C766641CFDD781006D373E /* ofApp.cpp */,
+				F8C766601CFDD781006D373E /* ofTest.h */,
 				F8C766651CFDD781006D373E /* ofTest.cpp */,
+				F8C766631CFDD781006D373E /* ofxFaceBlender */,
 				F8C766661CFDD781006D373E /* System */,
 			);
 			path = src;
