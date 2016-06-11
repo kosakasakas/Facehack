@@ -18,6 +18,7 @@
 		F8C766761CFDD781006D373E /* ofTest.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F8C766651CFDD781006D373E /* ofTest.cpp */; };
 		F8C766771CFDD781006D373E /* KSDenseOptimizer.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F8C7666A1CFDD781006D373E /* KSDenseOptimizer.cpp */; };
 		F8C766781CFDD781006D373E /* KSSparseOptimizer.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F8C7666F1CFDD781006D373E /* KSSparseOptimizer.cpp */; };
+		F8D3A9291D0C088C005ADBFA /* KSStatismoBridge.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F8D3A9271D0C088C005ADBFA /* KSStatismoBridge.cpp */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -121,6 +122,8 @@
 		F8C766701CFDD781006D373E /* KSSparseOptimizer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = KSSparseOptimizer.h; sourceTree = "<group>"; };
 		F8C766711CFDD781006D373E /* KSTypeDef.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = KSTypeDef.h; sourceTree = "<group>"; };
 		F8C766731CFDD781006D373E /* KSUtil.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = KSUtil.h; sourceTree = "<group>"; };
+		F8D3A9271D0C088C005ADBFA /* KSStatismoBridge.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = KSStatismoBridge.cpp; sourceTree = "<group>"; wrapsLines = 1; };
+		F8D3A9281D0C088C005ADBFA /* KSStatismoBridge.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = KSStatismoBridge.h; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -295,6 +298,15 @@
 			name = include;
 			sourceTree = "<group>";
 		};
+		F8A2AC481D0C07F200B91E90 /* StatismoBridge */ = {
+			isa = PBXGroup;
+			children = (
+				F8D3A9271D0C088C005ADBFA /* KSStatismoBridge.cpp */,
+				F8D3A9281D0C088C005ADBFA /* KSStatismoBridge.h */,
+			);
+			path = StatismoBridge;
+			sourceTree = "<group>";
+		};
 		F8C7664E1CFDD4C4006D373E /* ofxTimeMeasurements */ = {
 			isa = PBXGroup;
 			children = (
@@ -334,6 +346,7 @@
 		F8C766661CFDD781006D373E /* System */ = {
 			isa = PBXGroup;
 			children = (
+				F8A2AC481D0C07F200B91E90 /* StatismoBridge */,
 				F8C766671CFDD781006D373E /* Math */,
 				F8C766721CFDD781006D373E /* Util */,
 			);
@@ -461,6 +474,7 @@
 				483FA4F6D5FA6422C559B1F5 /* ofxAssimpMeshHelper.cpp in Sources */,
 				8DED5056525646FA71980866 /* ofxAssimpModelLoader.cpp in Sources */,
 				B8846EF8E504895A4A9EFEC0 /* ofxAssimpTexture.cpp in Sources */,
+				F8D3A9291D0C088C005ADBFA /* KSStatismoBridge.cpp in Sources */,
 				F8C766771CFDD781006D373E /* KSDenseOptimizer.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -606,6 +620,11 @@
 					../../../addons/ofxAssimpModelLoader/libs/assimp/license,
 					../../../addons/ofxAssimpModelLoader/src,
 					/usr/local/include,
+					/usr/local/include/statismo/VTK,
+					/usr/local/include/statismo/ITK,
+					/usr/local/include/statismo/core,
+					"/usr/local/include/eigen-3",
+					"/usr/local/include/vtk-7.0",
 				);
 				ICON = "$(ICON_NAME_DEBUG)";
 				ICON_FILE = "$(ICON_FILE_PATH)$(ICON)";
@@ -654,6 +673,11 @@
 					../../../addons/ofxAssimpModelLoader/libs/assimp/license,
 					../../../addons/ofxAssimpModelLoader/src,
 					/usr/local/include,
+					/usr/local/include/statismo/VTK,
+					/usr/local/include/statismo/ITK,
+					/usr/local/include/statismo/core,
+					"/usr/local/include/eigen-3",
+					"/usr/local/include/vtk-7.0",
 				);
 				ICON = "$(ICON_NAME_RELEASE)";
 				ICON_FILE = "$(ICON_FILE_PATH)$(ICON)";

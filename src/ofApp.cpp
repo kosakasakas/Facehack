@@ -5,10 +5,6 @@
 
 //--------------------------------------------------------------
 void ofApp::setup(){
-
-    // 球体のセットアップ
-    //m_Sphere.setRadius(ofGetHeight() * 0.3f);
-    //m_Sphere.setResolution(2);
     
     // ==================================
     // フレームレートの設定。
@@ -34,15 +30,16 @@ void ofApp::setup(){
         ofASSERT(testResult, "テストに失敗しました。");
     }
     
-    m_Model.loadModel("model/shape_0.obj");
     // シェーダのロード
     m_Shader.load("shader/test.vert", "shader/test.frag");
     
     // これをしないとUVがピクセル座標になってしまう
     ofDisableArbTex();
     
+    // 画像ロード
     m_Image.load("image/alice.jpg");
     
+    // メッシュを手動生成するテスト
     m_Mesh.addVertex(ofVec3f(100,100,0));
     m_Mesh.addVertex(ofVec3f(100,200,0));
     m_Mesh.addVertex(ofVec3f(200,200,0));
@@ -63,6 +60,7 @@ void ofApp::setup(){
     m_Mesh.addIndex(3);
     m_Mesh.addIndex(0);
     
+    // オフスクリーンレンダリング用のFBO確保
     m_Fbo.allocate(512, 512, GL_RGBA8);
 }
 
@@ -73,47 +71,36 @@ void ofApp::update(){
 
 //--------------------------------------------------------------
 void ofApp::draw(){
-    
+    // デプステスト有効化
     ofEnableDepthTest();
     
+    // トランスフォーム処理
     float spinX = sin(ofGetElapsedTimef()*.35f);
     float spinY = cos(ofGetElapsedTimef()*.075f);
     
-    m_Model.setPosition(ofGetWidth()*0.5f, (float)ofGetHeight() * 0.5f , 0);
-    //m_Sphere.setPosition(ofGetWidth()*0.5f, (float)ofGetHeight() * 0.5f , 0);
-    
-    ofxAssimpMeshHelper & meshHelper = m_Model.getMeshHelper(0);
-    ofMaterial & material = meshHelper.material;
-    material.setColors(ofFloatColor(0.5,0.5,0.5),
-                       ofFloatColor(0.5, 0.5, 0.5),
-                       ofFloatColor(0.5, 0.5, 0.5),
-                       ofFloatColor(0.5,0.5,0.5));
-    //auto mesh = m_Model.getMesh(0);
-    
+    // シェーダのUniformセット
     m_Shader.setUniformTexture("u_sampleTex", m_Image.getTexture(), 0);
     
+    // オフスクリーン描画
     m_Fbo.begin();
-    ofClear(255,255,255, 255);
-    m_Shader.begin();
-    m_Mesh.draw();
-    m_Shader.end();
+    {
+        // カラー初期化
+        ofClear(255,255,255, 255);
+        // シェーダ有効化
+        m_Shader.begin();
+        {
+            // メッシュを描画
+            m_Mesh.draw();
+        }
+        m_Shader.end();
+    }
     m_Fbo.end();
     
+    // フレームバッファを描画
     m_Fbo.draw(0, 0);
     
-    //m_Shader.begin();
-    //material.begin();
-    //m_Model.draw(OF_MESH_FILL);
-    //m_Sphere.draw();
-    //mesh.draw();
-    //m_box.draw();
-    
-    //m_Mesh.draw();
-    //material.end();
-    //m_Shader.end();
-    
+    // UI用にデプステストは切っておく
     ofDisableDepthTest();
-    
 }
 
 //--------------------------------------------------------------
