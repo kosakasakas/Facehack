@@ -1,6 +1,3 @@
 [submodule "extAddons/ofxTimeMeasurements"]
 	path = extAddons/ofxTimeMeasurements
 	url = git@github.com:armadillu/ofxTimeMeasurements.git
-[submodule "extAddons/Statismo"]
-	path = extAddons/Statismo
-	url = git@github.com:kosakasakas/statismo.git
