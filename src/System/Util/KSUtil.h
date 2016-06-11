@@ -14,7 +14,7 @@
 #define KSUtil_h
 
 #include "ofLog.h"
-#include "../../../extAddons/Eigen/Dense"
+#include <eigen3/Eigen/Dense>
 
 namespace Kosakasakas
 {

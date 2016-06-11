@@ -13,8 +13,8 @@
 #ifndef KSTypeDef_h
 #define KSTypeDef_h
 
-#include "../../../extAddons/Eigen/Dense"
-#include "../../../extAddons/Eigen/SparseCore"
+#include <eigen3/Eigen/Dense>
+#include <eigen3/Eigen/SparseCore>
 
 namespace Kosakasakas {
 

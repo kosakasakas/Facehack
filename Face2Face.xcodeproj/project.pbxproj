@@ -605,12 +605,16 @@
 					../../../addons/ofxAssimpModelLoader/libs/assimp/lib/osx,
 					../../../addons/ofxAssimpModelLoader/libs/assimp/license,
 					../../../addons/ofxAssimpModelLoader/src,
+					/usr/local/include,
 				);
 				ICON = "$(ICON_NAME_DEBUG)";
 				ICON_FILE = "$(ICON_FILE_PATH)$(ICON)";
 				INFOPLIST_FILE = "openFrameworks-Info.plist";
 				INSTALL_PATH = /Applications;
-				LIBRARY_SEARCH_PATHS = "$(inherited)";
+				LIBRARY_SEARCH_PATHS = (
+					"$(inherited)",
+					/usr/local/lib,
+				);
 				OTHER_LDFLAGS = (
 					"$(OF_CORE_FRAMEWORKS)",
 					"$(OF_CORE_LIBS)",
@@ -649,12 +653,16 @@
 					../../../addons/ofxAssimpModelLoader/libs/assimp/lib/osx,
 					../../../addons/ofxAssimpModelLoader/libs/assimp/license,
 					../../../addons/ofxAssimpModelLoader/src,
+					/usr/local/include,
 				);
 				ICON = "$(ICON_NAME_RELEASE)";
 				ICON_FILE = "$(ICON_FILE_PATH)$(ICON)";
 				INFOPLIST_FILE = "openFrameworks-Info.plist";
 				INSTALL_PATH = /Applications;
-				LIBRARY_SEARCH_PATHS = "$(inherited)";
+				LIBRARY_SEARCH_PATHS = (
+					"$(inherited)",
+					/usr/local/lib,
+				);
 				OTHER_LDFLAGS = (
 					"$(OF_CORE_FRAMEWORKS)",
 					"$(OF_CORE_LIBS)",

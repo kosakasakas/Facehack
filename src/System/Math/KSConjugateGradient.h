@@ -14,8 +14,8 @@
 #define KSConjugateGradient_h
 
 #include "KSNormalEquationSolver.h"
-#include "../../../extAddons/Eigen/SparseCholesky"
-#include "../../../extAddons/Eigen/IterativeLinearSolvers"
+#include <eigen3/Eigen/SparseCholesky>
+#include <eigen3/Eigen/IterativeLinearSolvers>
 
 
 namespace Kosakasakas {
