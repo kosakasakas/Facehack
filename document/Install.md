@@ -1,12 +1,8 @@
-# boostのインストール
+# Macの場合
 
+homebrewで依存関係を丸ごとインストールします.
 
-# HDF5のインストール
+    brew tap homebrew/science
+    brew install statismo 
 
-* [公式ページ](https://www.hdfgroup.org/)から最新のソースコードを落としてくる。自分の場合は2.8.17でした.
-* フォルダを解凍して以下のコマンドを実行
-
-    cd hdf5-1.8.17
-    ./configure --prefix=$HOME/local --enable-cxx
-    make
-    make install
+以上

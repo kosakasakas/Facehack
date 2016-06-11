@@ -2,8 +2,14 @@
 最新論文を追実装してみようという試み
 
 # 動作確認環境
-OS X 10.10.5
+El capitan OS X 10.11.5
 openFrameworks v0.9.3
+
+# 依存関係
+hdf5の読み込みのためにstatismoを利用しています.
+これらは既にPCの/usr/localにインストールされていることを前提にプロジェクトが組まれています.
+
+インストール方法は[こちら](./document/Install.md)
 
 # 使い方とか
 現状はopenFrameworksのプロジェクトなので、このリポジトリを丸ごとapps/myApps以下においてください。
