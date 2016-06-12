@@ -2,6 +2,9 @@
 #include "ofTest.h"
 #include "ofxTimeMeasurements.h"
 #include "System/Util/KSUtil.h"
+#include "System/StatismoBridge/KSStatismoBridge.h"
+
+using namespace Kosakasakas;
 
 //--------------------------------------------------------------
 void ofApp::setup(){
@@ -62,6 +65,11 @@ void ofApp::setup(){
     
     // オフスクリーンレンダリング用のFBO確保
     m_Fbo.allocate(512, 512, GL_RGBA8);
+    
+    // Statismoのチェック
+    KSStatismoBridge* pStatismo = new KSStatismoBridge();
+    pStatismo->Initialize();
+    free(pStatismo);
 }
 
 //--------------------------------------------------------------
