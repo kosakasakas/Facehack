@@ -1,9 +1,10 @@
 #pragma once
 
 #include "ofMain.h"
+#include "ofxAssimpModelLoader.h"
 
-class ofApp : public ofBaseApp{
-
+class ofApp : public ofBaseApp
+{
 	public:
 		void setup();
 		void update();
@@ -21,4 +22,17 @@ class ofApp : public ofBaseApp{
 		void dragEvent(ofDragInfo dragInfo);
 		void gotMessage(ofMessage msg);
 		
+private:
+    //! シェーダオブジェクト
+    ofShader    m_Shader;
+    
+    ofBoxPrimitive m_box;
+    //! 球体オブジェクト
+    //ofIcoSpherePrimitive m_Sphere;
+    
+    ofxAssimpModelLoader m_Model;
+    
+    ofMesh m_Mesh;
+    ofImage m_Image;
+    ofFbo   m_Fbo;
 };

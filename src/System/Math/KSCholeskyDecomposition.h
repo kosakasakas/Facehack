@@ -14,7 +14,7 @@
 #define KSCholeskyDecomposition_h
 
 #include "KSNormalEquationSolver.h"
-#include "../../../extAddons/Eigen/SparseCholesky"
+#include <eigen3/Eigen/SparseCholesky>
 
 namespace Kosakasakas {
     
