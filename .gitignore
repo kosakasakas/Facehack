@@ -1,5 +1,9 @@
 # Created by https://www.gitignore.io/api/xcode,osx,openframeworks,c++
 
+# unpublic data
+bin/data/unpublic/*
+!bin/data/unpublic/.gitkeep
+
 ### Xcode ###
 # Xcode
 #
