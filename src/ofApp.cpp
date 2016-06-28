@@ -3,6 +3,7 @@
 #include "ofVTKExample.hpp"
 #include "ofxTimeMeasurements.h"
 #include "System/Util/KSUtil.h"
+#include "ofMorphableModel.hpp"
 
 using namespace Kosakasakas;
 
@@ -71,6 +72,9 @@ void ofApp::setup(){
     vtkExample.Initialize();
     vtkExample.Run();
     vtkExample.Finalize();
+    
+    ofMorphableModel m;
+    m.Initialize();
 }
 
 //--------------------------------------------------------------

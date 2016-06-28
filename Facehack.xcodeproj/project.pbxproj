@@ -34,6 +34,7 @@
 		F81E3EC61D0D31C200CEFC9A /* libvtkFiltersCore-7.0.1.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = F81E3EBA1D0D31C200CEFC9A /* libvtkFiltersCore-7.0.1.dylib */; };
 		F81E3EC71D0D31C200CEFC9A /* libvtkCommonComputationalGeometry-7.0.1.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = F81E3EBB1D0D31C200CEFC9A /* libvtkCommonComputationalGeometry-7.0.1.dylib */; };
 		F81E3ECD1D0D4B1A00CEFC9A /* ofVTKExample.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F81E3ECB1D0D4B1A00CEFC9A /* ofVTKExample.cpp */; };
+		F81E3ED31D22CB1F00CEFC9A /* ofMorphableModel.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F81E3ED11D22CB1F00CEFC9A /* ofMorphableModel.cpp */; };
 		F8C7665F1CFDD4C4006D373E /* ofxTimeMeasurements.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F8C766581CFDD4C4006D373E /* ofxTimeMeasurements.cpp */; };
 		F8C766741CFDD781006D373E /* main.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F8C766611CFDD781006D373E /* main.cpp */; };
 		F8C766751CFDD781006D373E /* ofApp.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F8C766641CFDD781006D373E /* ofApp.cpp */; };
@@ -146,6 +147,8 @@
 		F81E3EBB1D0D31C200CEFC9A /* libvtkCommonComputationalGeometry-7.0.1.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; path = "libvtkCommonComputationalGeometry-7.0.1.dylib"; sourceTree = "<group>"; };
 		F81E3ECB1D0D4B1A00CEFC9A /* ofVTKExample.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ofVTKExample.cpp; sourceTree = "<group>"; };
 		F81E3ECC1D0D4B1A00CEFC9A /* ofVTKExample.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = ofVTKExample.hpp; sourceTree = "<group>"; };
+		F81E3ED11D22CB1F00CEFC9A /* ofMorphableModel.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ofMorphableModel.cpp; sourceTree = "<group>"; };
+		F81E3ED21D22CB1F00CEFC9A /* ofMorphableModel.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = ofMorphableModel.hpp; sourceTree = "<group>"; };
 		F8C766541CFDD4C4006D373E /* tree.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = tree.h; sourceTree = "<group>"; };
 		F8C766581CFDD4C4006D373E /* ofxTimeMeasurements.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ofxTimeMeasurements.cpp; sourceTree = "<group>"; };
 		F8C766591CFDD4C4006D373E /* ofxTimeMeasurements.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ofxTimeMeasurements.h; sourceTree = "<group>"; };
@@ -346,6 +349,8 @@
 				F81E3ECC1D0D4B1A00CEFC9A /* ofVTKExample.hpp */,
 				F8C766631CFDD781006D373E /* ofxFaceBlender */,
 				F8C766661CFDD781006D373E /* System */,
+				F81E3ED11D22CB1F00CEFC9A /* ofMorphableModel.cpp */,
+				F81E3ED21D22CB1F00CEFC9A /* ofMorphableModel.hpp */,
 			);
 			path = src;
 			sourceTree = SOURCE_ROOT;
@@ -564,6 +569,7 @@
 			files = (
 				F81E3ECD1D0D4B1A00CEFC9A /* ofVTKExample.cpp in Sources */,
 				F8C766761CFDD781006D373E /* ofTest.cpp in Sources */,
+				F81E3ED31D22CB1F00CEFC9A /* ofMorphableModel.cpp in Sources */,
 				F8C766781CFDD781006D373E /* KSSparseOptimizer.cpp in Sources */,
 				F8C766751CFDD781006D373E /* ofApp.cpp in Sources */,
 				F8C7665F1CFDD4C4006D373E /* ofxTimeMeasurements.cpp in Sources */,
