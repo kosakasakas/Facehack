@@ -2,6 +2,7 @@
 #include "ofTest.h"
 #include "ofxTimeMeasurements.h"
 #include "System/Util/KSUtil.h"
+#include "ofxObjLoader.h"
 
 using namespace Kosakasakas;
 
@@ -46,12 +47,18 @@ void ofApp::setup(){
         // 権利上、モデルは配布できないので自分で取得してunpublicディレクトリに置いてください.
         m_BaselFace.Initialize("unpublic", "model2009-publicmm1-bfm.h5");
         
+        /*
         // 適当に主成分を突っ込んでメッシュ構築してみる
         KSVectorXf shapeCoeff(3);
         KSVectorXf albedoCoeff(3);
         shapeCoeff  << 2.0f, 3.0f, 1.0f;
         albedoCoeff << 0.0f, 1.0f, 1.0f;
         m_BaselFace.DrawSample(shapeCoeff, albedoCoeff);
+         */
+        
+        // mean shapeをOBJで保存
+        m_BaselFace.DrawMean();
+        ofxObjLoader::save("unpublic/meanShape.obj", m_BaselFace.GetMesh());
         
         // 初期位置をセット
         m_BaselFace.GetModelMatrix().translate(0.5f * m_Fbo.getWidth(), 0.5f * m_Fbo.getHeight(), 0.0f);

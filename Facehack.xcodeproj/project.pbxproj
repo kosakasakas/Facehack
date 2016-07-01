@@ -36,6 +36,8 @@
 		F81E3EC61D0D31C200CEFC9A /* libvtkFiltersCore-7.0.1.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = F81E3EBA1D0D31C200CEFC9A /* libvtkFiltersCore-7.0.1.dylib */; };
 		F81E3EC71D0D31C200CEFC9A /* libvtkCommonComputationalGeometry-7.0.1.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = F81E3EBB1D0D31C200CEFC9A /* libvtkCommonComputationalGeometry-7.0.1.dylib */; };
 		F81E3ECD1D0D4B1A00CEFC9A /* ofVTKExample.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F81E3ECB1D0D4B1A00CEFC9A /* ofVTKExample.cpp */; };
+		F8A23B051D26BE0B00E8F846 /* glm.c in Sources */ = {isa = PBXBuildFile; fileRef = F8A23AFB1D26BE0B00E8F846 /* glm.c */; };
+		F8A23B071D26BE0B00E8F846 /* ofxObjLoader.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F8A23AFF1D26BE0B00E8F846 /* ofxObjLoader.cpp */; };
 		F8C7665F1CFDD4C4006D373E /* ofxTimeMeasurements.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F8C766581CFDD4C4006D373E /* ofxTimeMeasurements.cpp */; };
 		F8C766741CFDD781006D373E /* main.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F8C766611CFDD781006D373E /* main.cpp */; };
 		F8C766751CFDD781006D373E /* ofApp.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F8C766641CFDD781006D373E /* ofApp.cpp */; };
@@ -152,6 +154,10 @@
 		F81E3EBB1D0D31C200CEFC9A /* libvtkCommonComputationalGeometry-7.0.1.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; path = "libvtkCommonComputationalGeometry-7.0.1.dylib"; sourceTree = "<group>"; };
 		F81E3ECB1D0D4B1A00CEFC9A /* ofVTKExample.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ofVTKExample.cpp; sourceTree = "<group>"; };
 		F81E3ECC1D0D4B1A00CEFC9A /* ofVTKExample.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = ofVTKExample.hpp; sourceTree = "<group>"; };
+		F8A23AFB1D26BE0B00E8F846 /* glm.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = glm.c; sourceTree = "<group>"; };
+		F8A23AFC1D26BE0B00E8F846 /* glm.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = glm.h; sourceTree = "<group>"; };
+		F8A23AFF1D26BE0B00E8F846 /* ofxObjLoader.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ofxObjLoader.cpp; sourceTree = "<group>"; };
+		F8A23B001D26BE0B00E8F846 /* ofxObjLoader.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ofxObjLoader.h; sourceTree = "<group>"; };
 		F8C766541CFDD4C4006D373E /* tree.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = tree.h; sourceTree = "<group>"; };
 		F8C766581CFDD4C4006D373E /* ofxTimeMeasurements.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ofxTimeMeasurements.cpp; sourceTree = "<group>"; };
 		F8C766591CFDD4C4006D373E /* ofxTimeMeasurements.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ofxTimeMeasurements.h; sourceTree = "<group>"; };
@@ -304,6 +310,7 @@
 		BB4B014C10F69532006C3DED /* addons */ = {
 			isa = PBXGroup;
 			children = (
+				F8A23ADE1D26BE0B00E8F846 /* ofxObjLoader */,
 				F8C7664E1CFDD4C4006D373E /* ofxTimeMeasurements */,
 				2C8F245ACBE61E28646C17F2 /* ofxAssimpModelLoader */,
 			);
@@ -403,6 +410,34 @@
 				F81E3EA01D0D300E00CEFC9A /* libsz.2.dylib */,
 			);
 			path = libs;
+			sourceTree = "<group>";
+		};
+		F8A23ADE1D26BE0B00E8F846 /* ofxObjLoader */ = {
+			isa = PBXGroup;
+			children = (
+				F8A23AFA1D26BE0B00E8F846 /* libs */,
+				F8A23AFE1D26BE0B00E8F846 /* src */,
+			);
+			name = ofxObjLoader;
+			path = extAddons/ofxObjLoader;
+			sourceTree = "<group>";
+		};
+		F8A23AFA1D26BE0B00E8F846 /* libs */ = {
+			isa = PBXGroup;
+			children = (
+				F8A23AFB1D26BE0B00E8F846 /* glm.c */,
+				F8A23AFC1D26BE0B00E8F846 /* glm.h */,
+			);
+			path = libs;
+			sourceTree = "<group>";
+		};
+		F8A23AFE1D26BE0B00E8F846 /* src */ = {
+			isa = PBXGroup;
+			children = (
+				F8A23AFF1D26BE0B00E8F846 /* ofxObjLoader.cpp */,
+				F8A23B001D26BE0B00E8F846 /* ofxObjLoader.h */,
+			);
+			path = src;
 			sourceTree = "<group>";
 		};
 		F8A2AC481D0C07F200B91E90 /* StatismoBridge */ = {
@@ -579,11 +614,13 @@
 				F8C7665F1CFDD4C4006D373E /* ofxTimeMeasurements.cpp in Sources */,
 				3B8120368B4FCCD80883BAF3 /* ofxAssimpAnimation.cpp in Sources */,
 				F8C766741CFDD781006D373E /* main.cpp in Sources */,
+				F8A23B071D26BE0B00E8F846 /* ofxObjLoader.cpp in Sources */,
 				483FA4F6D5FA6422C559B1F5 /* ofxAssimpMeshHelper.cpp in Sources */,
 				1458823D1D26724800DE93F7 /* ofKsModel.cpp in Sources */,
 				8DED5056525646FA71980866 /* ofxAssimpModelLoader.cpp in Sources */,
 				B8846EF8E504895A4A9EFEC0 /* ofxAssimpTexture.cpp in Sources */,
 				1458823C1D26724800DE93F7 /* ofKsBaselFaceModel.cpp in Sources */,
+				F8A23B051D26BE0B00E8F846 /* glm.c in Sources */,
 				F8D3A9291D0C088C005ADBFA /* KSVTKExample.cpp in Sources */,
 				F8C766771CFDD781006D373E /* KSDenseOptimizer.cpp in Sources */,
 			);
