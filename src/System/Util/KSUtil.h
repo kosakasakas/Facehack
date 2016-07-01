@@ -82,6 +82,36 @@ namespace Kosakasakas
             
             return M;
         }
+        
+        /**
+         @brief 面法線の計算
+         */
+        template <typename Value>
+        static void CalcFaceNormal(Value* dst, Value* v0, Value* v1, Value* v2)
+        {
+            // 頂点を結ぶベクトルを算出
+            Value vec1[3] = {
+                v1[0] - v0[0],
+                v1[1] - v0[1],
+                v1[2] - v0[2]
+            };
+            Value vec2[3] = {
+                v2[0] - v0[0],
+                v2[1] - v0[1],
+                v2[2] - v0[2]
+            };
+            
+            // ベクトル同士の外積
+            dst[0] = vec1[1] * vec2[2] - vec1[2] * vec2[1];
+            dst[1] = vec1[2] * vec2[0] - vec1[0] * vec2[2];
+            dst[2] = vec1[0] * vec2[1] - vec1[1] * vec2[0];
+            
+            // ノーマライズ
+            double len = max(sqrt(dst[0] * dst[0] + dst[1] * dst[1] + dst[2] * dst[2]), 0.00001);
+            dst[0] /= len;
+            dst[1] /= len;
+            dst[2] /= len;
+        }
 
     };
 }
