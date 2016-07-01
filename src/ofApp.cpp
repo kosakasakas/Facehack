@@ -9,7 +9,7 @@ using namespace Kosakasakas;
 void ofApp::setup(){
     
     // フレームレートの設定
-    float frameRate = 0.0f;
+    float frameRate = 60.0f;
     ofSetVerticalSync(false);
     ofSetFrameRate(frameRate);
     TIME_SAMPLE_SET_FRAMERATE(frameRate);
