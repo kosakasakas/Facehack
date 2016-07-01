@@ -7,9 +7,6 @@ openFrameworks v0.9.3
 
 # 依存関係
 hdf5の読み込みのために[statismo](https://github.com/statismo/statismo)を利用しています.
-これらは既にPCの/usr/localにインストールされていることを前提にプロジェクトが組まれています.
-
-インストール方法は[こちら](./document/Install.md)
 
 # 使い方とか
 現状はopenFrameworksのプロジェクトなので、このリポジトリを丸ごとapps/myApps以下においてください。
