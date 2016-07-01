@@ -2,6 +2,7 @@
 
 #include "ofMain.h"
 #include "ofxAssimpModelLoader.h"
+#include "ofKsBaselFaceModel.hpp"
 
 class ofApp : public ofBaseApp
 {
@@ -26,13 +27,15 @@ private:
     //! シェーダオブジェクト
     ofShader    m_Shader;
     
-    ofBoxPrimitive m_box;
-    //! 球体オブジェクト
-    //ofIcoSpherePrimitive m_Sphere;
+    //! カメラオブジェクト
+    ofCamera    m_Camera;
     
-    ofxAssimpModelLoader m_Model;
+    //! バーセルモデル
+    Kosakasakas::ofKsBaselFaceModel m_BaselFace;
     
-    ofMesh m_Mesh;
+    //! テクスチャ
     ofImage m_Image;
+    
+    //! オフスクリーンレンダリング用のフレームバッファ
     ofFbo   m_Fbo;
 };

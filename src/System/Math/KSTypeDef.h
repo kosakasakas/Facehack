@@ -31,6 +31,12 @@ namespace Kosakasakas {
     typedef Eigen::SparseMatrix<double>                             KSMatrixSparsed;
     
     /**
+     @brief float精度の任意要素ベクトル
+     Eigenラップしただけです。
+     */
+    typedef Eigen::Matrix<float, Eigen::Dynamic, 1>                 KSVectorXf;
+    
+    /**
      @brief double精度の任意要素ベクトル
      現状最適化処理専用で、Eigenラップしただけです。
      */
