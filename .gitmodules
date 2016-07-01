@@ -1,3 +1,6 @@
 [submodule "extAddons/ofxTimeMeasurements"]
 	path = extAddons/ofxTimeMeasurements
 	url = git@github.com:armadillu/ofxTimeMeasurements.git
+[submodule "extAddons/ofxObjLoader"]
+	path = extAddons/ofxObjLoader
+	url = git@github.com:kosakasakas/ofxObjLoader.git
