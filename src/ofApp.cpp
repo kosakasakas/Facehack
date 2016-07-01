@@ -43,6 +43,7 @@ void ofApp::setup(){
     // バーセルPCAモデルのセットアップ
     {
         // モデルのロード
+        // 権利上、モデルは配布できないので自分で取得してunpublicディレクトリに置いてください.
         m_BaselFace.Initialize("unpublic", "model2009-publicmm1-bfm.h5");
         
         // 適当に主成分を突っ込んでメッシュ構築してみる
