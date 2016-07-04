@@ -3,7 +3,8 @@
 uniform mat4 modelViewMatrix;
 uniform mat4 projectionMatrix;
 uniform mat4 textureMatrix;
-uniform mat4 modelViewProjectionMatrix;
+ uniform mat4 modelViewProjectionMatrix;
+uniform mat4 u_mvp;
 
 in vec4 position;
 in vec4 color;
@@ -17,6 +18,7 @@ out vec4 o_color;
 void main()
 {
     gl_Position = modelViewProjectionMatrix * position;
+    //gl_Position = u_mvp * position;
     mat3 mv3    = mat3(modelViewMatrix);
     mat3 NMat   = transpose(inverse(mv3)); 
     o_normal    = NMat * normal;

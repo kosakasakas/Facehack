@@ -70,8 +70,10 @@ void ofApp::setup(){
     
     // カメラのセットアップ
     {
-        m_Camera.setPosition(0.0f, 0.0f, 0.0f);
-        m_Camera.lookAt(ofVec3f(0.0f, 0.0f, 1.0f));
+        m_Camera.setPosition(0.0f, 0.0f, 500.0f);
+        m_Camera.lookAt(ofVec3f(0.0f, 0.0f, 0.0f), ofVec3f(0.0, 1.0, 0.0));
+        m_Camera.setFov(120.0f);
+        m_Camera.setAspectRatio(1.0);
     }
 }
 
@@ -84,36 +86,43 @@ void ofApp::update(){
 void ofApp::draw(){
     // デプステスト有効化
     ofEnableDepthTest();
-    glEnable(GL_CULL_FACE);
-    glCullFace(GL_FRONT);
     
     // トランスフォーム処理
     //float spinX = sin(ofGetElapsedTimef()*.35f);
     //float spinY = cos(ofGetElapsedTimef()*.075f);
     
-    // シェーダのUniformセット
-    //m_Shader.setUniformTexture("u_sampleTex", m_Image.getTexture(), 0);
+    // 自前で行列を計算しておく
+    const ofMatrix4x4 modelMat      = m_BaselFace.GetModelMatrixConst();
+    const ofMatrix4x4 viewProjMat   = m_Camera.getModelViewProjectionMatrix();
+    ofMatrix4x4 m;
+    ofQuaternion q;
+    q.makeRotate(120.0f, ofVec3f(1.0,0.0,0.0));
+    q.makeRotate(90.0f, ofVec3f(0.0,0.0,1.0));
+    m.rotate(q);
+    ofMatrix4x4 mvp = viewProjMat * m;
     
     // カメラを使う
-    m_Camera.begin();
     {
         // オフスクリーン描画
         m_Fbo.begin();
         {
+            glEnable(GL_CULL_FACE);
+            glCullFace(GL_FRONT);
             // カラー初期化
             ofClear(255,255,255, 255);
             // シェーダ有効化
             m_Shader.begin();
             {
+                // 行列をシェーダに渡す
+                m_Shader.setUniformMatrix4f("u_mvp", mvp);
+                
                 // 行列をプッシュ
                 ofPushMatrix();
                 {
-                    // 行列取得
-                    const ofMatrix4x4 modelMat  = m_BaselFace.GetModelMatrixConst();
-                    // 移動
-                    ofTranslate(modelMat.getTranslation());
+                    m_Camera.begin();
                     // メッシュを描画
                     m_BaselFace.GetMesh().draw();
+                    m_Camera.end();
                     
                 }
                 ofPopMatrix();
@@ -122,7 +131,6 @@ void ofApp::draw(){
         }
         m_Fbo.end();
     }
-    m_Camera.end();
     
     // フレームバッファを描画
     m_Fbo.draw(0, 0);
