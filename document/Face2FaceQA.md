@@ -91,9 +91,6 @@ https://github.com/statismo/statismo
 
 モーファブルモデルで事前作成してるってことで一旦done．
 
-
-
-
 ### Q6. ターゲットの表情トラッキングは事前じゃないのか？
 
 論文の中盤とかFig1では事前トラッキングしているように見えるけど、最初の説明のところではboth source and target的な感じでランタイムにトラッキングするといっている。
@@ -113,11 +110,11 @@ bundling approach based on a prerecorded training sequence. As this preprocess i
 
 ※ここで6フレームって言っているのは使用した720pのHD画像6フレーム分という意味。計算には20秒くらいかかっている。
 
-### 7 IdentityとAlbedoは事前処理で求めるだけでよいのか．残りはFix?
+### Q7. IdentityとAlbedoは事前処理で求めるだけでよいのか．残りはFix?
 
 事前処理として，IdentityとAlbedoは一度推定し，毎フレームの最適化では固定とする．
 
-### 8 ターゲットも毎フレームExpressionの係数を最適化によって求めているのか？
+### Q8. ターゲットも毎フレームExpressionの係数を最適化によって求めているのか？
 
 + 求められている場合
 	+ Expression Transferによって差分を更に付与
