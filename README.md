@@ -25,6 +25,7 @@ hdf5の読み込みのために[statismo](https://github.com/statismo/statismo)�
 
 # ドキュメント
  * [Face2Face日本語要約](./document/Face2Face-jp.md)
+ * [Face2Face掲示板](./document/Face2FaceQA.md)  
 
 # 参考
 元論文
