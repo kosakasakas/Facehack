@@ -3,7 +3,7 @@
 homebrewで依存関係を丸ごとインストールします.
 
     brew tap homebrew/science
-    brew install statismo 
+    brew install statismo
 
 statismo内でPIがduplicateするので以下で回避した。
 
@@ -13,8 +13,8 @@ statismo内でPIがduplicateするので以下で回避した。
 
 ## Permission deniedになる場合の対処
 
-　　$ sudo chown -R `whoami` /usr/local
-　　$ cd /usr/local
-　　$ git reset --hard origin/master
+    $ sudo chown -R `whoami` /usr/local  
+    $ cd /usr/local  
+    $ git reset --hard origin/master  
 
 以上
