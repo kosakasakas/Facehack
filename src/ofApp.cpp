@@ -38,7 +38,18 @@ void ofApp::setup(){
     //m_Image.load("image/alice.jpg");
     
     // オフスクリーンレンダリング用のFBO確保
-    m_Fbo.allocate(512, 512, GL_RGBA8);
+    {
+        ofFbo::Settings setting;
+        setting.width   = 512;
+        setting.height  = 512;
+        setting.internalformat  = GL_RGBA8;
+        setting.numColorbuffers = 1;
+        setting.useDepth    = true;
+        setting.useStencil  = true;
+        setting.depthStencilInternalFormat  = GL_DEPTH24_STENCIL8;
+        setting.depthStencilAsTexture   = true;
+        m_Fbo.allocate(setting);
+    }
     
     // バーセルPCAモデルのセットアップ
     {
@@ -115,6 +126,10 @@ void ofApp::draw(){
     
     // フレームバッファを描画
     m_Fbo.draw(0, 0);
+    
+    // デプスバッファの表示
+    m_Fbo.getDepthTexture().draw(512, 0, 256, 256);
+    ofDrawBitmapString( "depth buffer", 512, 10);
     
     // UI用にデプステストは切っておく
     ofDisableDepthTest();
