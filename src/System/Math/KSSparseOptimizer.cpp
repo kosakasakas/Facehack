@@ -28,8 +28,8 @@ KSSparseOptimizer::~KSSparseOptimizer()
 // 初期化
 bool    KSSparseOptimizer::Initialize(KSFunctionSparse& residual,
                                      KSFunctionSparse& jaconian,
-                                     KSMatrixSparsed& initParam,
-                                     KSMatrixSparsed& data)
+                                     KSMatrixSparsef& initParam,
+                                     KSMatrixSparsef& data)
 {
     m_FuncResidual  = std::move(residual);
     m_FuncJacobian  = std::move(jaconian);
@@ -58,13 +58,13 @@ bool    KSSparseOptimizer::DoGaussNewtonStep()
         return false;
     }
     
-    KSMatrixSparsed j    = m_FuncJacobian(m_MatParam);
+    KSMatrixSparsef j    = m_FuncJacobian(m_MatParam);
     if (j.rows() < j.cols())
     {
         return false;
     }
     
-    KSMatrixSparsed y    = m_FuncResidual(m_MatParam);
+    KSMatrixSparsef y    = m_FuncResidual(m_MatParam);
     
     return m_pNESolver->Solve(m_MatParam, y, j, m_MaxIterations);
 }
@@ -77,15 +77,15 @@ bool    KSSparseOptimizer::DoGaussNewtonStepIRLS()
         return false;
     }
     
-    KSMatrixSparsed j    = m_FuncJacobian(m_MatParam);
+    KSMatrixSparsef j    = m_FuncJacobian(m_MatParam);
     if (j.rows() < j.cols())
     {
         return false;
     }
-    KSMatrixSparsed y    = m_FuncResidual(m_MatParam);
+    KSMatrixSparsef y    = m_FuncResidual(m_MatParam);
     
     // IRLS用のweightを算出して乗算
-    KSVectorXd v = y.col(0);
+    KSVectorXf v = y.col(0);
     auto w = v.cwiseAbs().cwiseMax(0.00001).cwiseInverse().asDiagonal();
     for (int i=0,n=j.cols(); i<n; ++i)
     {
@@ -99,9 +99,9 @@ bool    KSSparseOptimizer::DoGaussNewtonStepIRLS()
 // 残差平方和の取得
 double KSSparseOptimizer::GetSquaredResidualsSum()
 {
-    KSMatrixSparsed m   = m_FuncResidual(m_MatParam);
-    KSMatrixSparsed mt  = m.transpose();
-    KSMatrixSparsed res = mt * m;
+    KSMatrixSparsef m   = m_FuncResidual(m_MatParam);
+    KSMatrixSparsef mt  = m.transpose();
+    KSMatrixSparsef res = mt * m;
     return fabs(res.coeff(0, 0));
 }
 

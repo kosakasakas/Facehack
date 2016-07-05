@@ -28,8 +28,8 @@ KSDenseOptimizer::~KSDenseOptimizer()
 // 初期化
 bool    KSDenseOptimizer::Initialize(KSFunction& residual,
                                        KSFunction& jaconian,
-                                       KSMatrixXd& initParam,
-                                       KSMatrixXd& data)
+                                       KSMatrixXf& initParam,
+                                       KSMatrixXf& data)
 {
     m_FuncResidual  = std::move(residual);
     m_FuncJacobian  = std::move(jaconian);
@@ -58,13 +58,13 @@ bool    KSDenseOptimizer::DoGaussNewtonStep()
         return false;
     }
     
-    KSMatrixXd j    = m_FuncJacobian(m_MatParam);
+    KSMatrixXf j    = m_FuncJacobian(m_MatParam);
     if (j.rows() < j.cols())
     {
         return false;
     }
     
-    KSMatrixXd y    = m_FuncResidual(m_MatParam);
+    KSMatrixXf y    = m_FuncResidual(m_MatParam);
     
     return m_pNESolver->Solve(m_MatParam, y, j, m_MaxIterations);
 }
@@ -77,15 +77,15 @@ bool    KSDenseOptimizer::DoGaussNewtonStepIRLS()
         return false;
     }
     
-    KSMatrixXd j    = m_FuncJacobian(m_MatParam);
+    KSMatrixXf j    = m_FuncJacobian(m_MatParam);
     if (j.rows() < j.cols())
     {
         return false;
     }
-    KSMatrixXd y    = m_FuncResidual(m_MatParam);
+    KSMatrixXf y    = m_FuncResidual(m_MatParam);
     
     // IRLS用のweightを算出して乗算
-    KSMatrixXd w    = y.col(0).cwiseAbs().cwiseMax(0.00001).cwiseInverse().asDiagonal();
+    KSMatrixXf w    = y.col(0).cwiseAbs().cwiseMax(0.00001).cwiseInverse().asDiagonal();
     for (int i=0,n=j.cols(); i<n; ++i)
     {
         j.col(i) = w * j.col(i);
