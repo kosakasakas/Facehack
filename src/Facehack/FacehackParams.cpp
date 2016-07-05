@@ -86,7 +86,7 @@ bool FacehackParams::Initialize()
     // テストデータの格納
     m_pParams(CAM_POS)      = 0.0f;
     m_pParams(CAM_POS+1)    = 0.0f;
-    m_pParams(CAM_POS+2)    = 300.0f;
+    m_pParams(CAM_POS+2)    = 500.0f;
     
     m_pParams(CAM_LOOKAT)      = 0.0f;
     m_pParams(CAM_LOOKAT+1)    = 0.0f;
@@ -94,41 +94,40 @@ bool FacehackParams::Initialize()
     
     m_pParams(CAM_FOV)      = 60.0f;
     
-    m_pParams(CAM_ASPECT)    = 6.0f / 4.0f;
+    m_pParams(CAM_ASPECT)    = 3.0f / 2.0f;
     
-    ofQuaternion q;
-    q.makeRotate(30.0f, ofVec3f(0.0f, 1.0f, 0.0f));
+    std::fill_n(m_pParams.data()+ALPHA,
+                ALPHA_COEFF_NUM,
+                0.0f);
     
-    m_pParams(FACE_QUAT)    = q.x();
-    m_pParams(FACE_QUAT+1)  = q.y();
-    m_pParams(FACE_QUAT+2)  = q.z();
-    m_pParams(FACE_QUAT+3)  = q.w();
+    std::fill_n(m_pParams.data()+BETA,
+                BETA_COEFF_NUM,
+                0.0f);
+    
+    std::fill_n(m_pParams.data()+GAMMA_R,
+                GAMMA_COEFF_NUM,
+                0.0f);
+    
+    std::fill_n(m_pParams.data()+GAMMA_G,
+                GAMMA_COEFF_NUM,
+                0.0f);
+    std::fill_n(m_pParams.data()+GAMMA_B,
+                GAMMA_COEFF_NUM,
+                0.0f);
+    
+    std::fill_n(m_pParams.data()+DELTA,
+                DELTA_COEFF_NUM,
+                0.0f);
+    
+    
+    m_pParams(FACE_QUAT)    = 0.0f;
+    m_pParams(FACE_QUAT+1)  = 0.0f;
+    m_pParams(FACE_QUAT+2)  = 0.0f;
+    m_pParams(FACE_QUAT+3)  = 1.0f;
     
     m_pParams(FACE_TRANS)   = 0.0f;
     m_pParams(FACE_TRANS+1)   = 0.0f;
     m_pParams(FACE_TRANS+2)   = 0.0f;
-    
-    std::fill_n(m_pParams.data()+ALPHA,
-                ALPHA_COEFF_NUM,
-                1.0f);
-    
-    std::fill_n(m_pParams.data()+BETA,
-                BETA_COEFF_NUM,
-                2.0f);
-    
-    std::fill_n(m_pParams.data()+GAMMA_R,
-                GAMMA_COEFF_NUM,
-                3.0f);
-    std::fill_n(m_pParams.data()+GAMMA_G,
-                GAMMA_COEFF_NUM,
-                4.0f);
-    std::fill_n(m_pParams.data()+GAMMA_B,
-                GAMMA_COEFF_NUM,
-                5.0f);
-    
-    std::fill_n(m_pParams.data()+DELTA,
-                DELTA_COEFF_NUM,
-                6.0f);
     
     return true;
 }

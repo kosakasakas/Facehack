@@ -34,13 +34,9 @@ private:
     //! バーセルモデル
     //Kosakasakas::ofKsBaselFaceModel m_BaselFace;
     
-    Facehack::FacehackModelPtr m_pSourceModel;
-    Facehack::FacehackModelPtr m_pTargetModel;
+    Facehack::FacehackModelPtr m_pTestModel;
+    Facehack::FacehackModelPtr m_pSrcModel;
     
     //! テクスチャ
     ofImage m_Image;
-    
-    //! オフスクリーンレンダリング用のフレームバッファ
-    ofFbo   m_FboSource;
-    ofFbo   m_FboOutput;
 };

@@ -49,6 +49,10 @@ bool    FacehackModel::Initialize(int width,
 void    FacehackModel::Finalize()
 {}
 
+void    FacehackModel::Update()
+{
+}
+
 void    FacehackModel::Update(ParamsPtr& pParams)
 {
 }
@@ -99,4 +103,3 @@ void    FacehackModel::SetSourceTexture(const ofTexture& srcTex)
 {
     m_SrcTex = srcTex;
 }
-

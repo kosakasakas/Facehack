@@ -35,6 +35,7 @@ namespace Facehack {
                            const FacialModelPtr& pFacial);
         void    Finalize();
         
+        void    Update();
         void    Update(ParamsPtr& pParam);
         void    Draw();
         
@@ -44,11 +45,6 @@ namespace Facehack {
         }
         
         void    SetSourceTexture(const ofTexture& srcTex);
-        
-    private:
-        float   GetPhotoConsistency();
-        float   GetFeatureAlignment();
-        float   GetStatisticalRegularization();
         
     private:
         FacialModelPtr  m_pFacialModel;

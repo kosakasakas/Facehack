@@ -69,12 +69,6 @@ namespace Facehack {
         void    SetFacialQuaternion(const ofQuaternion& quat);
         void    SetFacialTransform(const ofVec3f& trans);
         
-        const Kosakasakas::KSVectorXf&  GetParams() const
-        {
-            return m_pParams;
-        }
-        
-    private:
         //! パラメータ配列のレイアウト
         enum DataLayout
         {
@@ -93,11 +87,16 @@ namespace Facehack {
             
             TOTAL_NUM   = FACE_TRANS    + 3
         };
+        typedef Eigen::Matrix<float, TOTAL_NUM, 1> ParamVec;
+        
+        const ParamVec&  GetParams() const
+        {
+            return m_pParams;
+        }
         
     private:
         //! パラメータ配列
         //Kosakasakas::KSVectorXf  m_pParams;
-        typedef Eigen::Matrix<float, TOTAL_NUM, 1> ParamVec;
         ParamVec m_pParams;
         
         // キャッシュしておく（実行時に変更しない）パラメータ

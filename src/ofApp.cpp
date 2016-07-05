@@ -33,31 +33,18 @@ void ofApp::setup(){
     // これをしないとUVがピクセル座標になってしまう
     ofDisableArbTex();
     
-    // 画像描画用のFBO確保
+    // ファクトリ作成
+    int width   = 300;
+    int height  = 200;
+    FacehackFactory factory;
+    if (!factory.Initialize(width, height))
     {
-        ofFbo::Settings setting;
-        setting.width           = 300;
-        setting.height          = 200;
-        setting.internalformat  = GL_RGBA8;
-        setting.numColorbuffers = 1;
-        setting.useDepth        = true;
-        setting.useStencil      = true;
-        setting.depthStencilInternalFormat  = GL_DEPTH24_STENCIL8;
-        setting.depthStencilAsTexture       = true;
-        m_FboSource.allocate(setting);
-        m_FboOutput.allocate(setting);
+        ofLog(OF_LOG_ERROR, "ファクトリの生成に失敗しました");
+        return;
     }
     
-    // ソースモデルの作成
+    // テストモデルの作成
     {
-        // ファクトリ作成
-        FacehackFactory factory;
-        if (!factory.Initialize(300, 200))
-        {
-            ofLog(OF_LOG_ERROR, "ファクトリの生成に失敗しました");
-            return;
-        }
-        
         // Facehackパラメータ作成
         ParamsPtr pParam = make_shared<FacehackParams>();
         {
@@ -65,7 +52,7 @@ void ofApp::setup(){
             ofVec3f camPos      = ofVec3f(0.0f, 0.0f, 300.0f);
             ofVec3f camLookAt   = ofVec3f(0.0f, 0.0f, 0.0f);
             float camFov        = 60.0f;
-            float camAspectRatio = (float)m_FboSource.getWidth() / (float)m_FboSource.getHeight();
+            float camAspectRatio = (float)width/(float)height;
             
             // イルミネーションパラメータ
             GammaCoeffArray gammaR, gammaG, gammaB;
@@ -101,30 +88,44 @@ void ofApp::setup(){
                 return;
             }
         }
+        
+        // テストモデルを生成
+        m_pTestModel = factory.Create(pParam);
+    }
     
-        // モデルを生成
-        m_pSourceModel = factory.Create(pParam);
-        m_pTargetModel = factory.Create();
-        m_pTargetModel->SetSourceTexture(m_pSourceModel->GetTexture());
+    // ソースモデルの作成
+    {
+        // パラメータは初期値でいい
+        ParamsPtr pParam = make_shared<FacehackParams>();
+        if (!pParam->Initialize())
+        {
+            ofLog(OF_LOG_ERROR, "Facehackパラメータの初期化に失敗しました");
+            return;
+        }
+        
+        // モデル生成
+        m_pSrcModel = factory.Create(pParam);
     }
     
 }
 
 //--------------------------------------------------------------
 void ofApp::update(){
-    
+    m_pSrcModel->Update();
 }
 
 //--------------------------------------------------------------
 void ofApp::draw(){
     
-    m_pSourceModel->Draw();
+    m_pTestModel->Draw();
+    m_pSrcModel->Draw();
     
     // フレームバッファを描画
-    m_pSourceModel->GetTexture().draw(0, 0);
+    m_pTestModel->GetTexture().draw(0, 0);
+    m_pSrcModel->GetTexture().draw(300, 0);
     
     ofDrawBitmapString( "press T : start tracking.", 0, 10);
-    ofDrawBitmapString( "source model", 0, 30);
+    ofDrawBitmapString( "test model", 0, 30);
     
 }
 
