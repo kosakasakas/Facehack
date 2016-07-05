@@ -15,7 +15,6 @@ void ofApp::setup(){
     TIME_SAMPLE_SET_FRAMERATE(frameRate);
     
     // テスト実施
-    if(0)
     {
         bool testResult = false;
         

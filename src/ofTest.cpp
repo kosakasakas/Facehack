@@ -40,7 +40,7 @@ bool    ofTest::DoTest()
         // ==================================
         
         // データセットを登録。ただし、一つだけ5%の誤差を含んでいる
-        KSMatrixXd  data(2, 5);
+        KSMatrixXf  data(2, 5);
         data << 0.01, 0.04, 0.08, 0.12 * 1.005, 0.16,
                 1.02, 1.08, 1.16, 1.24, 1.32;
         
@@ -48,10 +48,10 @@ bool    ofTest::DoTest()
         KSDenseOptimizer  optimizer;
         
         // 残差関数
-        KSFunction  residual    = [&optimizer](const KSMatrixXd &x)->KSMatrixXd
+        KSFunction  residual    = [&optimizer](const KSVectorXf &x)->KSVectorXf
         {
-            const KSMatrixXd& data = optimizer.GetDataMat();
-            KSMatrixXd r(data.cols(), 1);
+            const KSMatrixXf& data = optimizer.GetDataMat();
+            KSMatrixXf r(data.cols(), 1);
             
             for(int i=0, n=r.rows(); i<n; ++i)
             {
@@ -63,10 +63,10 @@ bool    ofTest::DoTest()
         };
         
         // 残差のヤコビアン
-        KSFunction jacobian     = [&optimizer](const KSMatrixXd &x)->KSMatrixXd
+        KSFunction jacobian     = [&optimizer](const KSVectorXf &x)->KSMatrixXf
         {
-            const KSMatrixXd& data = optimizer.GetDataMat();
-            KSMatrixXd d(data.cols(), x.rows());
+            const KSMatrixXf& data = optimizer.GetDataMat();
+            KSMatrixXf d(data.cols(), x.rows());
             
             for(int i=0,n=d.rows(); i<n; ++i)
             {
@@ -80,7 +80,7 @@ bool    ofTest::DoTest()
         };
         
         // パラメータ行列の初期値を設定
-        KSMatrixXd param0(2,1);
+        KSMatrixXf param0(2,1);
         param0 << 5.0, 5.0;
         
         // オプティマイザの初期化
@@ -108,7 +108,7 @@ bool    ofTest::DoTest()
               optimizer.GetParamMat()(1));
         
         // パラメータ行列の初期値を再設定
-        KSMatrixXd param1(2,1);
+        KSMatrixXf param1(2,1);
         param1 << 5.0, 5.0;
         optimizer.SetParamMat(param1);
         
@@ -149,7 +149,7 @@ bool    ofTest::DoTest()
         // ==================================
         
         // データセットを登録
-        KSMatrixXd  data(2, 7);
+        KSMatrixXf  data(2, 7);
         data <<  0.038, 0.194, 0.425, 0.626,  1.253,  2.500,  3.740,
         0.050, 0.127, 0.094, 0.2122, 0.2729, 0.2665, 0.3317;
         
@@ -157,10 +157,10 @@ bool    ofTest::DoTest()
         KSDenseOptimizer  optimizer;
         
         // 残差関数
-        KSFunction  residual    = [&optimizer](const KSMatrixXd &x)->KSMatrixXd
+        KSFunction  residual    = [&optimizer](const KSVectorXf &x)->KSVectorXf
         {
-            const KSMatrixXd& data = optimizer.GetDataMat();
-            KSMatrixXd y(data.cols(), 1);
+            const KSMatrixXf& data = optimizer.GetDataMat();
+            KSVectorXf y(data.cols());
             
             for(int i=0, n=y.rows(); i<n; ++i)
             {
@@ -170,10 +170,10 @@ bool    ofTest::DoTest()
         };
         
         // 残差のヤコビアン
-        KSFunction jacobian     = [&optimizer](const KSMatrixXd &x)->KSMatrixXd
+        KSFunction jacobian     = [&optimizer](const KSVectorXf &x)->KSMatrixXf
         {
-            const KSMatrixXd& data = optimizer.GetDataMat();
-            KSMatrixXd d(data.cols(), x.rows());
+            const KSMatrixXf& data = optimizer.GetDataMat();
+            KSMatrixXf d(data.cols(), x.rows());
             
             for(int i=0,n=d.rows(); i<n; ++i)
             {
@@ -185,7 +185,7 @@ bool    ofTest::DoTest()
         };
         
         // 正解値マトリックスの初期値を設定
-        KSMatrixXd param(2,1);
+        KSMatrixXf param(2,1);
         param << 0.9, 0.2;
         
         // オプティマイザの初期化
@@ -230,7 +230,7 @@ bool    ofTest::DoTest()
         // ==================================
     
         // データセットを登録
-        KSMatrixSparsed  data(2, 7);
+        KSMatrixSparsef  data(2, 7);
         data.insert(0, 0) = 0.038;
         data.insert(0, 1) = 0.194;
         data.insert(0, 2) = 0.425;
@@ -256,10 +256,10 @@ bool    ofTest::DoTest()
         optimizer.SetMaxIterations(4);
         
         // 残差関数
-        KSFunctionSparse  residual    = [&optimizer](const KSMatrixSparsed &x)->KSMatrixSparsed
+        KSFunctionSparse  residual    = [&optimizer](const KSMatrixSparsef &x)->KSMatrixSparsef
         {
-            const KSMatrixSparsed& data = optimizer.GetDataMat();
-            KSMatrixSparsed y(data.cols(), 1);
+            const KSMatrixSparsef& data = optimizer.GetDataMat();
+            KSMatrixSparsef y(data.cols(), 1);
             
             for(int i=0, n=y.rows(); i<n; ++i)
             {
@@ -269,10 +269,10 @@ bool    ofTest::DoTest()
         };
         
         // 残差のヤコビアン
-        KSFunctionSparse jacobian     = [&optimizer](const KSMatrixSparsed &x)->KSMatrixSparsed
+        KSFunctionSparse jacobian     = [&optimizer](const KSMatrixSparsef &x)->KSMatrixSparsef
         {
-            const KSMatrixSparsed& data = optimizer.GetDataMat();
-            KSMatrixSparsed d(data.cols(), x.rows());
+            const KSMatrixSparsef& data = optimizer.GetDataMat();
+            KSMatrixSparsef d(data.cols(), x.rows());
             
             for(int i=0,n=d.rows(); i<n; ++i)
             {
@@ -284,7 +284,7 @@ bool    ofTest::DoTest()
         };
         
         // 正解値マトリックスの初期値を設定
-        KSMatrixSparsed param(2,1);
+        KSMatrixSparsef param(2,1);
         param.insert(0, 0) = 0.9;
         param.insert(1, 0) = 0.2;
         
