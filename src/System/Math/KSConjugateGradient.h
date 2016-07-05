@@ -57,8 +57,19 @@ namespace Kosakasakas {
          */
         inline bool Solve(KSMatrixXf& dst, KSMatrixXf& y, KSMatrixXf& j, int maxIterations)
         {
-            // Denseを使う予定ないので一旦保留
-            return false;
+            KSMatrixXf jt  = j.transpose();
+            KSMatrixXf A   = jt * j;
+            KSMatrixXf b   = jt * y * -1.0;
+            Eigen::ConjugateGradient<KSMatrixXf> solver;
+            solver.compute(A);
+            if(solver.info()!=Eigen::Success)
+            {
+                return false;
+            }
+            solver.setMaxIterations(maxIterations);
+            KSMatrixXf s   = solver.solve(b);
+            dst                 = dst + s;
+            return true;
         };
         
         /**
