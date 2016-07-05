@@ -11,7 +11,13 @@
 		14588DCD1D2A7A0900DE93F7 /* ofKsModel.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 14588DCA1D2A7A0900DE93F7 /* ofKsModel.cpp */; };
 		14588DD31D2A7A1100DE93F7 /* ofTest.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 14588DCF1D2A7A1100DE93F7 /* ofTest.cpp */; };
 		14588DD41D2A7A1100DE93F7 /* ofVTKExample.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 14588DD11D2A7A1100DE93F7 /* ofVTKExample.cpp */; };
-		14588DDC1D2A7A4E00DE93F7 /* FacehackParams.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 14588DDA1D2A7A4E00DE93F7 /* FacehackParams.cpp */; };
+		14588DEA1D2A7BC600DE93F7 /* FacehackFactory.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 14588DE41D2A7BC600DE93F7 /* FacehackFactory.cpp */; };
+		14588DEB1D2A7BC600DE93F7 /* FacehackParams.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 14588DE61D2A7BC600DE93F7 /* FacehackParams.cpp */; };
+		14588DEC1D2A7BC600DE93F7 /* FacialModel.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 14588DE81D2A7BC600DE93F7 /* FacialModel.cpp */; };
+		14588DEF1D2A7C5B00DE93F7 /* FacehackModel.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 14588DED1D2A7C5B00DE93F7 /* FacehackModel.cpp */; };
+		14588DF21D2A7CF000DE93F7 /* CameraModel.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 14588DF01D2A7CF000DE93F7 /* CameraModel.cpp */; };
+		14588DF51D2A7D1400DE93F7 /* IlluminationModel.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 14588DF31D2A7D1400DE93F7 /* IlluminationModel.cpp */; };
+		14588DF81D2A7D5800DE93F7 /* FacehackSolver.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 14588DF61D2A7D5800DE93F7 /* FacehackSolver.cpp */; };
 		3B8120368B4FCCD80883BAF3 /* ofxAssimpAnimation.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 36068D6C1D6D412786A5C4C1 /* ofxAssimpAnimation.cpp */; };
 		483FA4F6D5FA6422C559B1F5 /* ofxAssimpMeshHelper.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F67FE68E327BEFBD4B777571 /* ofxAssimpMeshHelper.cpp */; };
 		8DED5056525646FA71980866 /* ofxAssimpModelLoader.cpp in Sources */ = {isa = PBXBuildFile; fileRef = EDE55D82BD962DAC0E94B708 /* ofxAssimpModelLoader.cpp */; };
@@ -85,8 +91,21 @@
 		14588DD01D2A7A1100DE93F7 /* ofTest.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ofTest.h; sourceTree = "<group>"; };
 		14588DD11D2A7A1100DE93F7 /* ofVTKExample.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ofVTKExample.cpp; sourceTree = "<group>"; };
 		14588DD21D2A7A1100DE93F7 /* ofVTKExample.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = ofVTKExample.hpp; sourceTree = "<group>"; };
-		14588DDA1D2A7A4E00DE93F7 /* FacehackParams.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = FacehackParams.cpp; sourceTree = "<group>"; };
-		14588DDB1D2A7A4E00DE93F7 /* FacehackParams.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = FacehackParams.hpp; sourceTree = "<group>"; };
+		14588DE41D2A7BC600DE93F7 /* FacehackFactory.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = FacehackFactory.cpp; sourceTree = "<group>"; };
+		14588DE51D2A7BC600DE93F7 /* FacehackFactory.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = FacehackFactory.hpp; sourceTree = "<group>"; };
+		14588DE61D2A7BC600DE93F7 /* FacehackParams.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = FacehackParams.cpp; sourceTree = "<group>"; };
+		14588DE71D2A7BC600DE93F7 /* FacehackParams.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = FacehackParams.hpp; sourceTree = "<group>"; };
+		14588DE81D2A7BC600DE93F7 /* FacialModel.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = FacialModel.cpp; sourceTree = "<group>"; };
+		14588DE91D2A7BC600DE93F7 /* FacialModel.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = FacialModel.hpp; sourceTree = "<group>"; };
+		14588DED1D2A7C5B00DE93F7 /* FacehackModel.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = FacehackModel.cpp; sourceTree = "<group>"; };
+		14588DEE1D2A7C5B00DE93F7 /* FacehackModel.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = FacehackModel.hpp; sourceTree = "<group>"; };
+		14588DF01D2A7CF000DE93F7 /* CameraModel.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = CameraModel.cpp; sourceTree = "<group>"; };
+		14588DF11D2A7CF000DE93F7 /* CameraModel.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = CameraModel.hpp; sourceTree = "<group>"; };
+		14588DF31D2A7D1400DE93F7 /* IlluminationModel.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = IlluminationModel.cpp; sourceTree = "<group>"; };
+		14588DF41D2A7D1400DE93F7 /* IlluminationModel.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = IlluminationModel.hpp; sourceTree = "<group>"; };
+		14588DF61D2A7D5800DE93F7 /* FacehackSolver.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = FacehackSolver.cpp; sourceTree = "<group>"; };
+		14588DF71D2A7D5800DE93F7 /* FacehackSolver.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = FacehackSolver.hpp; sourceTree = "<group>"; };
+		14588DFA1D2A876D00DE93F7 /* FacehackInclude.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = FacehackInclude.h; sourceTree = "<group>"; };
 		18D6965F094E05B40B20AFB8 /* IOStream.hpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 30; name = IOStream.hpp; path = ../../../addons/ofxAssimpModelLoader/libs/assimp/include/assimp/IOStream.hpp; sourceTree = SOURCE_ROOT; };
 		1E0C80A97E66F858E3720C91 /* quaternion.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 30; name = quaternion.h; path = ../../../addons/ofxAssimpModelLoader/libs/assimp/include/assimp/quaternion.h; sourceTree = SOURCE_ROOT; };
 		221A6B45269330B270549CB3 /* texture.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 30; name = texture.h; path = ../../../addons/ofxAssimpModelLoader/libs/assimp/include/assimp/texture.h; sourceTree = SOURCE_ROOT; };
@@ -235,13 +254,26 @@
 			path = Test;
 			sourceTree = "<group>";
 		};
-		14588DD91D2A7A4E00DE93F7 /* Facehacker */ = {
+		14588DE31D2A7BC600DE93F7 /* Facehack */ = {
 			isa = PBXGroup;
 			children = (
-				14588DDA1D2A7A4E00DE93F7 /* FacehackParams.cpp */,
-				14588DDB1D2A7A4E00DE93F7 /* FacehackParams.hpp */,
+				14588DE41D2A7BC600DE93F7 /* FacehackFactory.cpp */,
+				14588DE51D2A7BC600DE93F7 /* FacehackFactory.hpp */,
+				14588DE61D2A7BC600DE93F7 /* FacehackParams.cpp */,
+				14588DE71D2A7BC600DE93F7 /* FacehackParams.hpp */,
+				14588DE81D2A7BC600DE93F7 /* FacialModel.cpp */,
+				14588DE91D2A7BC600DE93F7 /* FacialModel.hpp */,
+				14588DED1D2A7C5B00DE93F7 /* FacehackModel.cpp */,
+				14588DEE1D2A7C5B00DE93F7 /* FacehackModel.hpp */,
+				14588DF01D2A7CF000DE93F7 /* CameraModel.cpp */,
+				14588DF11D2A7CF000DE93F7 /* CameraModel.hpp */,
+				14588DF31D2A7D1400DE93F7 /* IlluminationModel.cpp */,
+				14588DF41D2A7D1400DE93F7 /* IlluminationModel.hpp */,
+				14588DF61D2A7D5800DE93F7 /* FacehackSolver.cpp */,
+				14588DF71D2A7D5800DE93F7 /* FacehackSolver.hpp */,
+				14588DFA1D2A876D00DE93F7 /* FacehackInclude.h */,
 			);
-			path = Facehacker;
+			path = Facehack;
 			sourceTree = "<group>";
 		};
 		2C8F245ACBE61E28646C17F2 /* ofxAssimpModelLoader */ = {
@@ -377,7 +409,7 @@
 		E4B69E1C0A3A1BDC003C02F2 /* src */ = {
 			isa = PBXGroup;
 			children = (
-				14588DD91D2A7A4E00DE93F7 /* Facehacker */,
+				14588DE31D2A7BC600DE93F7 /* Facehack */,
 				F8C766611CFDD781006D373E /* main.cpp */,
 				F8C766621CFDD781006D373E /* ofApp.h */,
 				F8C766641CFDD781006D373E /* ofApp.cpp */,
@@ -593,19 +625,25 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				14588DEC1D2A7BC600DE93F7 /* FacialModel.cpp in Sources */,
+				14588DEF1D2A7C5B00DE93F7 /* FacehackModel.cpp in Sources */,
 				F8C766781CFDD781006D373E /* KSSparseOptimizer.cpp in Sources */,
 				F8C766751CFDD781006D373E /* ofApp.cpp in Sources */,
 				F8C7665F1CFDD4C4006D373E /* ofxTimeMeasurements.cpp in Sources */,
-				14588DDC1D2A7A4E00DE93F7 /* FacehackParams.cpp in Sources */,
 				3B8120368B4FCCD80883BAF3 /* ofxAssimpAnimation.cpp in Sources */,
 				F8C766741CFDD781006D373E /* main.cpp in Sources */,
+				14588DF51D2A7D1400DE93F7 /* IlluminationModel.cpp in Sources */,
+				14588DF21D2A7CF000DE93F7 /* CameraModel.cpp in Sources */,
 				14588DD41D2A7A1100DE93F7 /* ofVTKExample.cpp in Sources */,
 				14588DCC1D2A7A0900DE93F7 /* ofKsBaselFaceModel.cpp in Sources */,
+				14588DEA1D2A7BC600DE93F7 /* FacehackFactory.cpp in Sources */,
 				14588DCD1D2A7A0900DE93F7 /* ofKsModel.cpp in Sources */,
 				483FA4F6D5FA6422C559B1F5 /* ofxAssimpMeshHelper.cpp in Sources */,
+				14588DF81D2A7D5800DE93F7 /* FacehackSolver.cpp in Sources */,
 				8DED5056525646FA71980866 /* ofxAssimpModelLoader.cpp in Sources */,
 				B8846EF8E504895A4A9EFEC0 /* ofxAssimpTexture.cpp in Sources */,
 				F8D3A9291D0C088C005ADBFA /* KSVTKExample.cpp in Sources */,
+				14588DEB1D2A7BC600DE93F7 /* FacehackParams.cpp in Sources */,
 				14588DD31D2A7A1100DE93F7 /* ofTest.cpp in Sources */,
 				F8C766771CFDD781006D373E /* KSDenseOptimizer.cpp in Sources */,
 			);

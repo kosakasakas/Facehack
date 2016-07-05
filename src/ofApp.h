@@ -1,8 +1,9 @@
 #pragma once
 
 #include "ofMain.h"
-#include "ofxAssimpModelLoader.h"
-#include "ofKsBaselFaceModel.hpp"
+//#include "ofxAssimpModelLoader.h"
+//#include "ofKsBaselFaceModel.hpp"
+#include "FacehackInclude.h"
 
 class ofApp : public ofBaseApp
 {
@@ -25,17 +26,21 @@ class ofApp : public ofBaseApp
 		
 private:
     //! シェーダオブジェクト
-    ofShader    m_Shader;
+    //ofShader    m_Shader;
     
     //! カメラオブジェクト
-    ofCamera    m_Camera;
+    //ofCamera    m_Camera;
     
     //! バーセルモデル
-    Kosakasakas::ofKsBaselFaceModel m_BaselFace;
+    //Kosakasakas::ofKsBaselFaceModel m_BaselFace;
+    
+    Facehack::FacehackModelPtr m_pSourceModel;
+    Facehack::FacehackModelPtr m_pTargetModel;
     
     //! テクスチャ
     ofImage m_Image;
     
     //! オフスクリーンレンダリング用のフレームバッファ
-    ofFbo   m_Fbo;
+    ofFbo   m_FboSource;
+    ofFbo   m_FboOutput;
 };
