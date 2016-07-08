@@ -314,5 +314,204 @@ bool    ofTest::DoTest()
         ofASSERT(fabs(optimizer.GetParamMat().coeff(1, 0) - 0.556) < 0.01, "パラメータ推定結果が異なります。");
     }
     
+    // 例題No.4
+    {
+        // 剛体変換のパラメータを解いてみる。
+        //
+        //                       | a, b, c |
+        // Rt * v = | x, y, z| * | d, e, f | + |j, k, l|
+        //                       | g, h, i |
+        //
+        // で表されるとすると、未知数は12個。 それ以上の残差があれば解けるはず
+    /*
+        ofMatrix4x4 m;
+        m.makeRotationMatrix(30.0f, ofVec3f(0.0f, 1.0f, 0.0f));
+        m.translate(0.0f, 0.0f, 20.0f);
+        */
+        KSMatrixSparsef m(4,4);
+        m.coeffRef(0, 0) = 0.866025;
+        m.coeffRef(0, 1) = 0.0;
+        m.coeffRef(0, 2) = -0.5;
+        m.coeffRef(0, 3) = 0.0;
+        
+        m.coeffRef(1, 0) = 0.0;
+        m.coeffRef(1, 1) = 1.0;
+        m.coeffRef(1, 2) = 0.0;
+        m.coeffRef(1, 3) = 0.0;
+        
+        m.coeffRef(2, 0) = 0.5;
+        m.coeffRef(2, 1) = 0.0;
+        m.coeffRef(2, 2) = 0.866025;
+        m.coeffRef(2, 3) = 0.0;
+        
+        m.coeffRef(3, 0) = 20.0;
+        m.coeffRef(3, 1) = 0.0;
+        m.coeffRef(3, 2) = 0.0;
+        m.coeffRef(3, 3) = 1.0;
+        
+        // 適当に入力を作る
+        int sampleVecNum = 1000;
+        KSMatrixSparsef data(2, 3 * sampleVecNum);
+        for (int i = 0; i < sampleVecNum; ++i)
+        {
+            KSVectorSparsef v(4);
+            v.coeffRef(0) = ofRandom(-1.0f, 1.0f);
+            v.coeffRef(1) = ofRandom(-1.0f, 1.0f);
+            v.coeffRef(2) = ofRandom(-1.0f, 1.0f);
+            v.coeffRef(3) = 1.0f;
+            
+            KSVectorSparsef a = v.transpose() * m;
+            
+            data.insert(0, 3*i+0) = v.coeff(0);
+            data.insert(0, 3*i+1) = v.coeff(1);
+            data.insert(0, 3*i+2) = v.coeff(2);
+            
+            data.insert(1, 3*i+0) = a.coeff(0);
+            data.insert(1, 3*i+1) = a.coeff(1);
+            data.insert(1, 3*i+2) = a.coeff(2);
+        }
+        
+        // オプティマイザの宣言
+        KSSparseOptimizer  optimizer;
+        
+        // ソルバを前処理付き共役勾配法(PGC)に変更
+        optimizer.SwitchNormalEquationSolver(NESolverType::PCG);
+        
+        // PGCの試行回数のセット
+        optimizer.SetMaxIterations(8);
+        
+        // 残差関数
+        KSFunctionSparse  residual    = [&optimizer](const KSMatrixSparsef &x)->KSMatrixSparsef
+        {
+            const KSMatrixSparsef& data = optimizer.GetDataMat();
+            KSMatrixSparsef y(data.cols(), 1);
+            
+            KSMatrixSparsef mt(4,4);
+            mt.coeffRef(0, 0) = cos(x.coeff(0, 0));
+            mt.coeffRef(0, 1) = 0.0;
+            mt.coeffRef(0, 2) = -sin(x.coeff(0, 0));
+            mt.coeffRef(0, 3) = 0.0;
+            mt.coeffRef(1, 0) = 0.0;
+            mt.coeffRef(1, 1) = 1.0;
+            mt.coeffRef(1, 2) = 0.0;
+            mt.coeffRef(1, 3) = 0.0;
+            mt.coeffRef(2, 0) = sin(x.coeff(0, 0));
+            mt.coeffRef(2, 1) = 0.0;
+            mt.coeffRef(2, 2) = cos(x.coeff(0, 0));
+            mt.coeffRef(2, 3) = 0.0;
+            mt.coeffRef(3, 0) = x.coeff(1, 0);
+            mt.coeffRef(3, 1) = x.coeff(2, 0);
+            mt.coeffRef(3, 2) = x.coeff(3, 0);
+            mt.coeffRef(3, 3) = 1.0;
+            
+            for(int i=0, n=y.rows()/3; i<n; ++i)
+            {
+                KSVectorXf v(4);
+                v(0) = data.coeff(0, 3*i);
+                v(1) = data.coeff(0, 3*i+1);
+                v(2) = data.coeff(0, 3*i+2);
+                v(3) = 1.0f;
+                
+                // r = a - x * v
+                KSVectorXf d = v.transpose() * mt;
+                float* a;
+                a = d.data();
+                y.coeffRef(3*i,0)    = data.coeff(1, 3*i) - d(0);
+                y.coeffRef(3*i+1,0)  = data.coeff(1, 3*i+1) - d(1);
+                y.coeffRef(3*i+2,0)  = data.coeff(1, 3*i+2) - d(2);
+            }
+            return y;
+        };
+        
+        // 残差のヤコビアン
+        KSFunctionSparse jacobian     = [&optimizer](const KSMatrixSparsef &x)->KSMatrixSparsef
+        {
+            const KSMatrixSparsef& data = optimizer.GetDataMat();
+            KSMatrixSparsef d(data.cols(), x.rows());
+            
+            for(int i=0,n=d.rows()/3; i<n; ++i)
+            {
+                // 極めてΘが小さい場合は
+                // cosΘ = 1, sinΘ = Θ
+                // の近似が成り立つ。これを踏まえるとかなり簡略化できる.
+                
+                //4個入れる
+                //d.coeffRef(3*i, 0) = -(-data.coeff(0,3*i) * sin(x.coeff(0,0)) + data.coeff(0,3*i+2) * cos(x.coeff(0,0)));
+                d.coeffRef(3*i, 0) = -data.coeff(0,3*i+2);
+                d.coeffRef(3*i, 1) = -1.0;
+                d.coeffRef(3*i, 2) = 0.0;
+                d.coeffRef(3*i, 3) = 0.0;
+                
+                //4個入れる
+                d.coeffRef(3*i+1, 0) = 0.0;
+                d.coeffRef(3*i+1, 1) = 0.0;
+                d.coeffRef(3*i+1, 2) = -1.0;
+                d.coeffRef(3*i+1, 3) = 0.0;
+                
+                //4個入れる
+                //d.coeffRef(3*i+2, 0) = -(-data.coeff(0,3*i)*cos(x.coeff(0,0)) - data.coeff(0,3*i+2)*sin(x.coeff(0, 0)));
+                d.coeffRef(3*i+2, 0) = data.coeff(0,3*i);
+                d.coeffRef(3*i+2, 1) = 0.0;
+                d.coeffRef(3*i+2, 2) = 0.0;
+                d.coeffRef(3*i+2, 3) = -1.0;
+            }
+            
+            return d;
+        };
+        
+        // 正解値マトリックスの初期値を設定
+        KSMatrixSparsef param(4,1);
+        for (int i = 0; i < 4; ++i)
+        {
+            param.coeffRef(i, 0) = 1.5;
+        }
+    
+    /*
+         param.coeffRef(0, 0) = 0.866025;
+         param.coeffRef(1, 0) = 0.0;
+         param.coeffRef(2, 0) = -0.5;
+        
+         param.coeffRef(3, 0) = 0.0;
+         param.coeffRef(4, 0) = 1.0;
+         param.coeffRef(5, 0) = 0.0;
+        
+         param.coeffRef(6, 0) = 0.5;
+         param.coeffRef(7, 0) = 0.1;
+        param.coeffRef(8, 0) = 0.866025;
+        
+         param.coeffRef(9, 0) = 40.0;
+         param.coeffRef(10, 0) = 10.0;
+         param.coeffRef(11, 0) = 10.0;
+     */
+        
+        // オプティマイザの初期化
+        optimizer.Initialize(residual, jacobian, param, data);
+        
+        std::vector<double> srsLog;
+        
+        TS_START("optimization exmple 4");
+        for (int i = 0; i < 7; ++i)
+        {
+            ofASSERT(optimizer.DoGaussNewtonStep(), "ガウス-ニュートン計算ステップに失敗しました。");
+            srsLog.push_back(optimizer.GetSquaredResidualsSum());
+        }
+        TS_STOP("optimization exmple 4");
+        
+        //各ステップでの残差平方和
+        ofLog(OF_LOG_NOTICE,
+              "step0:%lf, step1:%lf, step2:%lf, step3:%lf",
+              srsLog[0], srsLog[1], srsLog[2], srsLog[3]);
+        
+        for (int i =0; i < 4; ++i)
+        {
+            ofLog(OF_LOG_ERROR, "%dth param: %lf", i, optimizer.GetParamMat().coeff(i, 0));
+        }
+        
+        ofASSERT(fabs(optimizer.GetParamMat().coeff(0, 0) - PI/6.0) < 0.01, "パラメータ推定結果が異なります。");
+        ofASSERT(fabs(optimizer.GetParamMat().coeff(1, 0) - 20.0) < 0.01, "パラメータ推定結果が異なります。");
+        ofASSERT(fabs(optimizer.GetParamMat().coeff(2, 0) - 0.0) < 0.01, "パラメータ推定結果が異なります。");
+        ofASSERT(fabs(optimizer.GetParamMat().coeff(3, 0) - 0.0) < 0.01, "パラメータ推定結果が異なります。");
+
+    }
     return true;
 }
