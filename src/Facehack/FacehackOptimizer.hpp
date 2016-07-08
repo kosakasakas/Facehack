@@ -38,6 +38,10 @@ namespace Facehack {
         float   GetStatisticalRegularization();
         
     private:
+        const float W_col   = 1.0f;
+        const float W_lan   = 10.0f;
+        const float W_reg   = 0.000025f;
+        
         ParamsPtr   m_pParam;
         ofTexture   m_InputTex;
         ofTexture   m_SynthesizedTex;
