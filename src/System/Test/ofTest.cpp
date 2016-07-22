@@ -324,30 +324,79 @@ bool    ofTest::DoTest()
         //
         // で表されるとすると、未知数は12個。 それ以上の残差があれば解けるはず
         
-        const int paramNum = 4;
+        const int paramNum = 6;
         float anser[paramNum];
-        anser[0] = ofDegToRad(-40.0f);
-        anser[1] = 15.0f;
-        anser[2] = 40.0f;
-        anser[3] = 10.0f;
+        anser[0] = ofDegToRad(30.0f); // ロール（X軸回転）
+        anser[1] = ofDegToRad(0.0f); // ピッチ（Y軸回転）
+        anser[2] = ofDegToRad(0.0f); // ヨー（Z軸回転）
+        anser[3] = 0.0f; // X軸平行移動
+        anser[4] = 0.0f; // Y軸平行移動
+        anser[5] = 0.0f;  // Z軸平行移動
         
-        ofMatrix4x4 m;
-        m.makeRotationMatrix(ofRadToDeg(anser[0]), ofVec3f(0.0f, 1.0f, 0.0f));
-        m.translate(anser[1], anser[2], anser[3]);
+        // 実験スペース
+        {
+            ofVec3f v = {0.0f, 0.0f, 1.0f};
+            ofVec3f t = {0.0f, 0.0f, 0.0f};
+            float r = ofDegToRad(20.0);
+            float p = ofDegToRad(30.0);
+            float y = ofDegToRad(40.0);
+            ofMatrix4x4 m, mr, mp, my;
+            m.makeRotationMatrix(ofRadToDeg(r), ofVec3f(1.0f, 0.0f, 0.0f),
+                                 ofRadToDeg(p), ofVec3f(0.0f, 1.0f, 0.0f),
+                                 ofRadToDeg(y), ofVec3f(0.0f, 0.0f, 1.0f));
+            m.translate(t);
+            ofVec3f a = ofMatrix4x4::transform3x3(m, v);
+            
+            KSMatrixSparsef mt(4,4);
+            mt.coeffRef(0, 0) = cosf(p) * cosf(y);
+            mt.coeffRef(0, 1) = cosf(r) * sinf(y) + sinf(r) * sinf(p) * cosf(y);
+            mt.coeffRef(0, 2) = sinf(r) * sinf(y) - cosf(r) * sinf(p) * cosf(y);
+            
+            mt.coeffRef(1, 0) = -cosf(p) * sinf(y);
+            mt.coeffRef(1, 1) = cosf(r) * cosf(y) - sinf(r) * sinf(p) * sinf(y);
+            mt.coeffRef(1, 2) = sinf(r) * cosf(y) + cosf(r) * sinf(p) * sinf(y);
+            
+            mt.coeffRef(2, 0) = sinf(p);
+            mt.coeffRef(2, 1) = -sinf(r) * cosf(p);
+            mt.coeffRef(2, 2) = cosf(r) * cosf(p);
+            
+            mt.coeffRef(3, 0) = -t.x;
+            mt.coeffRef(3, 1) = -t.y;
+            mt.coeffRef(3, 2) = t.z;
+
+            KSVectorSparsef vt(4);
+            vt.coeffRef(0) = v.x;
+            vt.coeffRef(1) = v.y;
+            vt.coeffRef(2) = v.z;
+            vt.coeffRef(3) = 1;
+            
+            KSVectorSparsef at = vt.transpose() * mt;
+            
+            ofLog(OF_LOG_ERROR, "X: [my]%lf, [of]%lf", at.coeff(0), a.x);
+            ofLog(OF_LOG_ERROR, "Y: [my]%lf, [of]%lf", at.coeff(1), a.y);
+            ofLog(OF_LOG_ERROR, "Z: [my]%lf, [of]%lf", at.coeff(2), a.z);
+            
+        }
+        
+        // ロール、ピッチ、ヨーの順で回転した後平行移動する行列を作成
+        ofMatrix4x4 m, mr, mp, my;
+        m.makeRotationMatrix(ofRadToDeg(anser[0]), ofVec3f(1.0f, 0.0f, 0.0f),
+                             ofRadToDeg(anser[1]), ofVec3f(0.0f, 1.0f, 0.0f),
+                             ofRadToDeg(anser[2]), ofVec3f(0.0f, 0.0f, 1.0f));
+        m.translate(anser[3], anser[4], anser[5]);
         
         // 適当に入力を作る
-        int sampleVecNum = 1000;
+        int sampleVecNum = 40;
         KSMatrixSparsef data(2, 3 * sampleVecNum);
         for (int i = 0; i < sampleVecNum; ++i)
         {
-            //KSVectorSparsef v(4);
             ofVec4f v;
             v.x = ofRandom(-1.0f, 1.0f);
             v.y = ofRandom(-1.0f, 1.0f);
             v.z = ofRandom(-1.0f, 1.0f);
             v.w = 1.0f;
             
-            ofVec4f a = v * m;
+            ofVec4f a = m * v;
             
             data.insert(0, 3*i+0) = v.x;
             data.insert(0, 3*i+1) = v.y;
@@ -371,43 +420,66 @@ bool    ofTest::DoTest()
         KSFunctionSparse  residual    = [&optimizer](const KSMatrixSparsef &x)->KSMatrixSparsef
         {
             const KSMatrixSparsef& data = optimizer.GetDataMat();
-            KSMatrixSparsef y(data.cols(), 1);
+            KSMatrixSparsef d(data.cols(), 1);
+            
+            float r = x.coeff(0, 0); // ロール
+            float p = x.coeff(1, 0); // ピッチ
+            float y = x.coeff(2, 0); // ヨー
             
             KSMatrixSparsef mt(4,4);
-            mt.coeffRef(0, 0) = cos(x.coeff(0, 0));
-            mt.coeffRef(0, 1) = 0.0;
-            mt.coeffRef(0, 2) = -sin(x.coeff(0, 0));
+            mt.coeffRef(0, 0) = cosf(r) * cosf(p);
+            mt.coeffRef(0, 1) = sinf(r) * cosf(p);
+            mt.coeffRef(0, 2) = -sinf(p);
             mt.coeffRef(0, 3) = 0.0;
-            mt.coeffRef(1, 0) = 0.0;
-            mt.coeffRef(1, 1) = 1.0;
-            mt.coeffRef(1, 2) = 0.0;
+            mt.coeffRef(1, 0) = cosf(r) * sinf(p) * sinf(y) - sinf(r) * cosf(y);
+            mt.coeffRef(1, 1) = sinf(r) * sinf(p) * sinf(y) + cosf(r) * cosf(y);
+            mt.coeffRef(1, 2) = cosf(p) * sinf(y);
             mt.coeffRef(1, 3) = 0.0;
-            mt.coeffRef(2, 0) = sin(x.coeff(0, 0));
-            mt.coeffRef(2, 1) = 0.0;
-            mt.coeffRef(2, 2) = cos(x.coeff(0, 0));
+            mt.coeffRef(2, 0) = cosf(r) * sinf(p) * cosf(y) + sinf(r) * sinf(y);
+            mt.coeffRef(2, 1) = sinf(r) * sinf(p) * cosf(y) - cosf(r) * sinf(y);
+            mt.coeffRef(2, 2) = cosf(p) * cosf(y);
             mt.coeffRef(2, 3) = 0.0;
-            mt.coeffRef(3, 0) = x.coeff(1, 0);
-            mt.coeffRef(3, 1) = x.coeff(2, 0);
-            mt.coeffRef(3, 2) = x.coeff(3, 0);
+            mt.coeffRef(3, 0) = x.coeff(3, 0);
+            mt.coeffRef(3, 1) = x.coeff(4, 0);
+            mt.coeffRef(3, 2) = x.coeff(5, 0);
             mt.coeffRef(3, 3) = 1.0;
             
-            for(int i=0, n=y.rows()/3; i<n; ++i)
+            // 実験
+            ofMatrix4x4 mt2, mt2r, mt2p, mt2y;
+            mt2.makeRotationMatrix(ofRadToDeg(r), ofVec3f(1.0f, 0.0f, 0.0f),
+                                 ofRadToDeg(p), ofVec3f(0.0f, 1.0f, 0.0f),
+                                 ofRadToDeg(y), ofVec3f(0.0f, 0.0f, 1.0f));
+            mt2.translate(x.coeff(3, 0), x.coeff(4, 0), x.coeff(5, 0));
+            
+            KSVectorSparsef v(4);
+            for(int i=0,n=d.rows()/3; i<n; ++i)
             {
-                KSVectorXf v(4);
-                v(0) = data.coeff(0, 3*i);
-                v(1) = data.coeff(0, 3*i+1);
-                v(2) = data.coeff(0, 3*i+2);
-                v(3) = 1.0f;
+                v.coeffRef(0) = data.coeff(0, 3*i);
+                v.coeffRef(1) = data.coeff(0, 3*i+1);
+                v.coeffRef(2) = data.coeff(0, 3*i+2);
+                v.coeffRef(3) = 1.0f;
                 
-                // r = a - x * v
-                KSVectorXf d = v.transpose() * mt;
-                float* a;
-                a = d.data();
-                y.coeffRef(3*i,0)    = data.coeff(1, 3*i) - d(0);
-                y.coeffRef(3*i+1,0)  = data.coeff(1, 3*i+1) - d(1);
-                y.coeffRef(3*i+2,0)  = data.coeff(1, 3*i+2) - d(2);
+                // r = a - v * mt
+                KSVectorSparsef vmt = v.transpose() * mt;
+                d.coeffRef(3*i,0)    = data.coeff(1, 3*i) - vmt.coeff(0);
+                d.coeffRef(3*i+1,0)  = data.coeff(1, 3*i+1) - vmt.coeff(1);
+                d.coeffRef(3*i+2,0)  = data.coeff(1, 3*i+2) - vmt.coeff(2);
+                
+                ofVec4f v2;
+                v2.x = data.coeff(0, 3*i);
+                v2.y = data.coeff(0, 3*i+1);
+                v2.z = data.coeff(0, 3*i+2);
+                v2.w = 1.0f;
+                ofVec4f vmt2 = mt2 * v2;
+                
+                ofLog(OF_LOG_ERROR, "r: %lf, p:%lf, y:%lf", r,p,y);
+                ofLog(OF_LOG_ERROR, "X: [opt]%lf, [real]%lf", vmt.coeff(0), vmt2.x);
+                ofLog(OF_LOG_ERROR, "Y: [opt]%lf, [real]%lf", vmt.coeff(1), vmt2.y);
+                ofLog(OF_LOG_ERROR, "Z: [opt]%lf, [real]%lf", vmt.coeff(2), vmt2.z);
+                ofLog(OF_LOG_ERROR, "W: [opt]%lf, [real]%lf", vmt.coeff(3), vmt2.w);
+                
             }
-            return y;
+            return d;
         };
         
         // 残差のヤコビアン
@@ -416,31 +488,56 @@ bool    ofTest::DoTest()
             const KSMatrixSparsef& data = optimizer.GetDataMat();
             KSMatrixSparsef d(data.cols(), x.rows());
             
+            float r = x.coeff(0, 0);
+            float p = x.coeff(1, 0);
+            float y = x.coeff(2, 0);
+            
             for(int i=0,n=d.rows()/3; i<n; ++i)
             {
                 // 極めてΘが小さい場合は
                 // cosΘ = 1, sinΘ = Θ
-                // の近似が成り立つ。これを踏まえるとかなり簡略化できる.
+                // さらに、sin * sin = 0と近似できる。
+                // これを踏まえて行列を変換すると、以下のようになる
+                // (ロール角がr, ピッチ角がp, ヨー角がy, 平行移動が(tx,ty,tz))
+                //      | 1   r   -p  0 |
+                // RT = | -r  1   y   0 |
+                //      | p   -y  1   0 |
+                //      | tx  ty  tz  1 |
+                // つまり、v(vx, vy, vz, 1)を変換すると、
+                //          | vx    - r*vy + p*vz + tx |t
+                // v * RT = | r*vx  + vy   - y*vz + ty |
+                //          | -p*vx + y*vy + vz   + tz |
+                //          | 1                        |
+                // になる。
+                // ということで、ヤコビアンは、、、
                 
-                //4個入れる
-                //d.coeffRef(3*i, 0) = -(-data.coeff(0,3*i) * sin(x.coeff(0,0)) + data.coeff(0,3*i+2) * cos(x.coeff(0,0)));
-                d.coeffRef(3*i, 0) = -data.coeff(0,3*i+2);
-                d.coeffRef(3*i, 1) = -1.0;
+                float vx = data.coeff(0, 3*i+0);
+                float vy = data.coeff(0, 3*i+1);
+                float vz = data.coeff(0, 3*i+2);
+                
+                //6個入れる
+                d.coeffRef(3*i, 0) = -(-vy);
+                d.coeffRef(3*i, 1) = -(vz);
                 d.coeffRef(3*i, 2) = 0.0;
-                d.coeffRef(3*i, 3) = 0.0;
+                d.coeffRef(3*i, 3) = -1.0;
+                d.coeffRef(3*i, 4) = 0.0;
+                d.coeffRef(3*i, 5) = 0.0;
                 
-                //4個入れる
-                d.coeffRef(3*i+1, 0) = 0.0;
+                //6個入れる
+                d.coeffRef(3*i+1, 0) = -(vx);
                 d.coeffRef(3*i+1, 1) = 0.0;
-                d.coeffRef(3*i+1, 2) = -1.0;
+                d.coeffRef(3*i+1, 2) = -(-vz);
                 d.coeffRef(3*i+1, 3) = 0.0;
+                d.coeffRef(3*i+1, 4) = -1.0;
+                d.coeffRef(3*i+1, 5) = 0.0;
                 
-                //4個入れる
-                //d.coeffRef(3*i+2, 0) = -(-data.coeff(0,3*i)*cos(x.coeff(0,0)) - data.coeff(0,3*i+2)*sin(x.coeff(0, 0)));
-                d.coeffRef(3*i+2, 0) = data.coeff(0,3*i);
-                d.coeffRef(3*i+2, 1) = 0.0;
-                d.coeffRef(3*i+2, 2) = 0.0;
-                d.coeffRef(3*i+2, 3) = -1.0;
+                //6個入れる
+                d.coeffRef(3*i+2, 0) = 0.0;
+                d.coeffRef(3*i+2, 1) = -(-vx);
+                d.coeffRef(3*i+2, 2) = -(vy);
+                d.coeffRef(3*i+2, 3) = 0.0;
+                d.coeffRef(3*i+2, 4) = 0.0;
+                d.coeffRef(3*i+2, 5) = -1.0;
             }
             
             return d;
@@ -450,7 +547,7 @@ bool    ofTest::DoTest()
         KSMatrixSparsef param(paramNum,1);
         for (int i = 0; i < paramNum; ++i)
         {
-            param.coeffRef(i, 0) = 1.5;
+            param.coeffRef(i, 0) = 0.0;
         }
         
         // オプティマイザの初期化
@@ -462,7 +559,7 @@ bool    ofTest::DoTest()
         TS_START("optimization exmple 4");
         for (int i = 0; i < gaussStepNum; ++i)
         {
-            ofASSERT(optimizer.DoGaussNewtonStep(), "ガウス-ニュートン計算ステップに失敗しました。");
+            ofASSERT(optimizer.DoGaussNewtonStepIRLS(), "ガウス-ニュートン計算ステップに失敗しました。");
             srsLog.push_back(optimizer.GetSquaredResidualsSum());
         }
         TS_STOP("optimization exmple 4");
