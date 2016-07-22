@@ -323,52 +323,39 @@ bool    ofTest::DoTest()
         //                       | g, h, i |
         //
         // で表されるとすると、未知数は12個。 それ以上の残差があれば解けるはず
-    /*
+        
+        const int paramNum = 4;
+        float anser[paramNum];
+        anser[0] = ofDegToRad(-40.0f);
+        anser[1] = 15.0f;
+        anser[2] = 40.0f;
+        anser[3] = 10.0f;
+        
         ofMatrix4x4 m;
-        m.makeRotationMatrix(30.0f, ofVec3f(0.0f, 1.0f, 0.0f));
-        m.translate(0.0f, 0.0f, 20.0f);
-        */
-        KSMatrixSparsef m(4,4);
-        m.coeffRef(0, 0) = 0.866025;
-        m.coeffRef(0, 1) = 0.0;
-        m.coeffRef(0, 2) = -0.5;
-        m.coeffRef(0, 3) = 0.0;
-        
-        m.coeffRef(1, 0) = 0.0;
-        m.coeffRef(1, 1) = 1.0;
-        m.coeffRef(1, 2) = 0.0;
-        m.coeffRef(1, 3) = 0.0;
-        
-        m.coeffRef(2, 0) = 0.5;
-        m.coeffRef(2, 1) = 0.0;
-        m.coeffRef(2, 2) = 0.866025;
-        m.coeffRef(2, 3) = 0.0;
-        
-        m.coeffRef(3, 0) = 20.0;
-        m.coeffRef(3, 1) = 0.0;
-        m.coeffRef(3, 2) = 0.0;
-        m.coeffRef(3, 3) = 1.0;
+        m.makeRotationMatrix(ofRadToDeg(anser[0]), ofVec3f(0.0f, 1.0f, 0.0f));
+        m.translate(anser[1], anser[2], anser[3]);
         
         // 適当に入力を作る
         int sampleVecNum = 1000;
         KSMatrixSparsef data(2, 3 * sampleVecNum);
         for (int i = 0; i < sampleVecNum; ++i)
         {
-            KSVectorSparsef v(4);
-            v.coeffRef(0) = ofRandom(-1.0f, 1.0f);
-            v.coeffRef(1) = ofRandom(-1.0f, 1.0f);
-            v.coeffRef(2) = ofRandom(-1.0f, 1.0f);
-            v.coeffRef(3) = 1.0f;
+            //KSVectorSparsef v(4);
+            ofVec4f v;
+            v.x = ofRandom(-1.0f, 1.0f);
+            v.y = ofRandom(-1.0f, 1.0f);
+            v.z = ofRandom(-1.0f, 1.0f);
+            v.w = 1.0f;
             
-            KSVectorSparsef a = v.transpose() * m;
+            ofVec4f a = v * m;
             
-            data.insert(0, 3*i+0) = v.coeff(0);
-            data.insert(0, 3*i+1) = v.coeff(1);
-            data.insert(0, 3*i+2) = v.coeff(2);
+            data.insert(0, 3*i+0) = v.x;
+            data.insert(0, 3*i+1) = v.y;
+            data.insert(0, 3*i+2) = v.z;
             
-            data.insert(1, 3*i+0) = a.coeff(0);
-            data.insert(1, 3*i+1) = a.coeff(1);
-            data.insert(1, 3*i+2) = a.coeff(2);
+            data.insert(1, 3*i+0) = a.x;
+            data.insert(1, 3*i+1) = a.y;
+            data.insert(1, 3*i+2) = a.z;
         }
         
         // オプティマイザの宣言
@@ -460,37 +447,20 @@ bool    ofTest::DoTest()
         };
         
         // 正解値マトリックスの初期値を設定
-        KSMatrixSparsef param(4,1);
-        for (int i = 0; i < 4; ++i)
+        KSMatrixSparsef param(paramNum,1);
+        for (int i = 0; i < paramNum; ++i)
         {
             param.coeffRef(i, 0) = 1.5;
         }
-    
-    /*
-         param.coeffRef(0, 0) = 0.866025;
-         param.coeffRef(1, 0) = 0.0;
-         param.coeffRef(2, 0) = -0.5;
-        
-         param.coeffRef(3, 0) = 0.0;
-         param.coeffRef(4, 0) = 1.0;
-         param.coeffRef(5, 0) = 0.0;
-        
-         param.coeffRef(6, 0) = 0.5;
-         param.coeffRef(7, 0) = 0.1;
-        param.coeffRef(8, 0) = 0.866025;
-        
-         param.coeffRef(9, 0) = 40.0;
-         param.coeffRef(10, 0) = 10.0;
-         param.coeffRef(11, 0) = 10.0;
-     */
         
         // オプティマイザの初期化
         optimizer.Initialize(residual, jacobian, param, data);
         
         std::vector<double> srsLog;
         
+        const int gaussStepNum = 7;
         TS_START("optimization exmple 4");
-        for (int i = 0; i < 7; ++i)
+        for (int i = 0; i < gaussStepNum; ++i)
         {
             ofASSERT(optimizer.DoGaussNewtonStep(), "ガウス-ニュートン計算ステップに失敗しました。");
             srsLog.push_back(optimizer.GetSquaredResidualsSum());
@@ -498,19 +468,16 @@ bool    ofTest::DoTest()
         TS_STOP("optimization exmple 4");
         
         //各ステップでの残差平方和
-        ofLog(OF_LOG_NOTICE,
-              "step0:%lf, step1:%lf, step2:%lf, step3:%lf",
-              srsLog[0], srsLog[1], srsLog[2], srsLog[3]);
-        
-        for (int i =0; i < 4; ++i)
+        for(int i = 0; i < gaussStepNum; ++i)
         {
-            ofLog(OF_LOG_ERROR, "%dth param: %lf", i, optimizer.GetParamMat().coeff(i, 0));
+            ofLog(OF_LOG_NOTICE, "SRS: (%dth step)%lf", i, srsLog[i]);
         }
         
-        ofASSERT(fabs(optimizer.GetParamMat().coeff(0, 0) - PI/6.0) < 0.01, "パラメータ推定結果が異なります。");
-        ofASSERT(fabs(optimizer.GetParamMat().coeff(1, 0) - 20.0) < 0.01, "パラメータ推定結果が異なります。");
-        ofASSERT(fabs(optimizer.GetParamMat().coeff(2, 0) - 0.0) < 0.01, "パラメータ推定結果が異なります。");
-        ofASSERT(fabs(optimizer.GetParamMat().coeff(3, 0) - 0.0) < 0.01, "パラメータ推定結果が異なります。");
+        for (int i =0; i < paramNum; ++i)
+        {
+            ofLog(OF_LOG_ERROR, "%dth param: [opt]%lf, [ans]%lf", i, optimizer.GetParamMat().coeff(i, 0), anser[i]);
+            ofASSERT(fabs(optimizer.GetParamMat().coeff(i, 0) - anser[i]) < 0.01, "パラメータ推定結果が異なります。");
+        }
 
     }
     return true;
