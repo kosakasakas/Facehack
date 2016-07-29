@@ -335,33 +335,33 @@ bool    ofTest::DoTest()
         
         // 実験スペース
         {
-            ofVec3f v = {0.0f, 0.0f, 1.0f};
+            ofVec3f v = {1.0f, 1.0f, 0.0f};
             ofVec3f t = {0.0f, 0.0f, 0.0f};
-            float r = ofDegToRad(20.0);
-            float p = ofDegToRad(30.0);
-            float y = ofDegToRad(40.0);
+            float a = ofDegToRad(30.0);
+            float b = ofDegToRad(0.0);
+            float c = ofDegToRad(0.0);
             ofMatrix4x4 m, mr, mp, my;
-            m.makeRotationMatrix(ofRadToDeg(r), ofVec3f(1.0f, 0.0f, 0.0f),
-                                 ofRadToDeg(p), ofVec3f(0.0f, 1.0f, 0.0f),
-                                 ofRadToDeg(y), ofVec3f(0.0f, 0.0f, 1.0f));
+            m.makeRotationMatrix(ofRadToDeg(a), ofVec3f(1.0f, 0.0f, 0.0f),
+                                 ofRadToDeg(b), ofVec3f(0.0f, 1.0f, 0.0f),
+                                 ofRadToDeg(c), ofVec3f(0.0f, 0.0f, 1.0f));
             m.translate(t);
-            ofVec3f a = ofMatrix4x4::transform3x3(m, v);
+            ofVec3f ans = ofMatrix4x4::transform3x3(m, v);
             
             KSMatrixSparsef mt(4,4);
-            mt.coeffRef(0, 0) = cosf(p) * cosf(y);
-            mt.coeffRef(0, 1) = cosf(r) * sinf(y) + sinf(r) * sinf(p) * cosf(y);
-            mt.coeffRef(0, 2) = sinf(r) * sinf(y) - cosf(r) * sinf(p) * cosf(y);
+            mt.coeffRef(0, 0) = cosf(b) * cosf(c);
+            mt.coeffRef(0, 1) = sinf(a) * sinf(b) * cosf(c) + cosf(a) * sinf(c);
+            mt.coeffRef(0, 2) = -cosf(a) * sinf(b) * cosf(c) + sinf(a) * sinf(c);
             
-            mt.coeffRef(1, 0) = -cosf(p) * sinf(y);
-            mt.coeffRef(1, 1) = cosf(r) * cosf(y) - sinf(r) * sinf(p) * sinf(y);
-            mt.coeffRef(1, 2) = sinf(r) * cosf(y) + cosf(r) * sinf(p) * sinf(y);
+            mt.coeffRef(1, 0) = -cosf(b) * sinf(c);
+            mt.coeffRef(1, 1) = -sinf(a) * sinf(b) * sinf(c) + cosf(a) * cosf(c);
+            mt.coeffRef(1, 2) = cosf(a) * sinf(b) * sinf(c) + sinf(a) * cosf(c);
             
-            mt.coeffRef(2, 0) = sinf(p);
-            mt.coeffRef(2, 1) = -sinf(r) * cosf(p);
-            mt.coeffRef(2, 2) = cosf(r) * cosf(p);
+            mt.coeffRef(2, 0) = sinf(b);
+            mt.coeffRef(2, 1) = -sinf(a) * cosf(b);
+            mt.coeffRef(2, 2) = cosf(a) * cosf(b);
             
-            mt.coeffRef(3, 0) = -t.x;
-            mt.coeffRef(3, 1) = -t.y;
+            mt.coeffRef(3, 0) = t.x;
+            mt.coeffRef(3, 1) = t.y;
             mt.coeffRef(3, 2) = t.z;
 
             KSVectorSparsef vt(4);
@@ -372,9 +372,9 @@ bool    ofTest::DoTest()
             
             KSVectorSparsef at = vt.transpose() * mt;
             
-            ofLog(OF_LOG_ERROR, "X: [my]%lf, [of]%lf", at.coeff(0), a.x);
-            ofLog(OF_LOG_ERROR, "Y: [my]%lf, [of]%lf", at.coeff(1), a.y);
-            ofLog(OF_LOG_ERROR, "Z: [my]%lf, [of]%lf", at.coeff(2), a.z);
+            ofLog(OF_LOG_ERROR, "X: [my]%lf, [of]%lf", at.coeff(0), ans.x);
+            ofLog(OF_LOG_ERROR, "Y: [my]%lf, [of]%lf", at.coeff(1), ans.y);
+            ofLog(OF_LOG_ERROR, "Z: [my]%lf, [of]%lf", at.coeff(2), ans.z);
             
         }
         
