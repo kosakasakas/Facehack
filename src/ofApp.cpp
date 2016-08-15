@@ -67,7 +67,9 @@ void ofApp::setup(){
             beta.fill(2.0f);
             delta.fill(3.0f);
             ofQuaternion faceQ;
-            faceQ.makeRotate(30.0f, ofVec3f(0.0f, 1.0f, 0.0f));
+            faceQ.makeRotate(0.0f,  ofVec3f(1.0f, 0.0f, 0.0f),
+                             30.0f, ofVec3f(0.0f, 1.0f, 0.0f),
+                             0.0f,  ofVec3f(0.0f, 0.0f, 1.0f));
             ofVec3f faceTrans = ofVec3f(0.0f, 0.0f, 0.0f);
             
             if (!pParam->Initialize(camPos,

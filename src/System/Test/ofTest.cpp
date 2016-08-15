@@ -316,87 +316,41 @@ bool    ofTest::DoTest()
     
     // 例題No.4
     {
-        // 剛体変換のパラメータを解いてみる。
-        //
-        //                       | a, b, c |
-        // Rt * v = | x, y, z| * | d, e, f | + |j, k, l|
-        //                       | g, h, i |
-        //
-        // で表されるとすると、未知数は12個。 それ以上の残差があれば解けるはず
+        // 剛体変換のパラメータを最適化で解いてみる。
+        // X軸の回転角をa, Y軸の回転角をb, Z軸の回転角をc、
+        // 平行移動成分を(vx, vy, vz)とすると、未知数は6個
+        // よってそれ以上の残差が与えられれば解けるはず
         
+        // 正解値を適当に与える
         const int paramNum = 6;
         float anser[paramNum];
-        anser[0] = ofDegToRad(30.0f); // ロール（X軸回転）
-        anser[1] = ofDegToRad(0.0f); // ピッチ（Y軸回転）
-        anser[2] = ofDegToRad(0.0f); // ヨー（Z軸回転）
-        anser[3] = 0.0f; // X軸平行移動
-        anser[4] = 0.0f; // Y軸平行移動
-        anser[5] = 0.0f;  // Z軸平行移動
+        anser[0] = ofDegToRad(20.0f); // X軸回転角
+        anser[1] = ofDegToRad(30.0f); // Y軸回転角
+        anser[2] = ofDegToRad(10.0f); // Z軸回転角
+        anser[3] = 30.0f; // X軸平行移動
+        anser[4] = 20.0f; // Y軸平行移動
+        anser[5] = 10.0f;  // Z軸平行移動
         
-        // 実験スペース
-        {
-            ofVec3f v = {1.0f, 1.0f, 0.0f};
-            ofVec3f t = {0.0f, 0.0f, 0.0f};
-            float a = ofDegToRad(30.0);
-            float b = ofDegToRad(0.0);
-            float c = ofDegToRad(0.0);
-            ofMatrix4x4 m, mr, mp, my;
-            m.makeRotationMatrix(ofRadToDeg(a), ofVec3f(1.0f, 0.0f, 0.0f),
-                                 ofRadToDeg(b), ofVec3f(0.0f, 1.0f, 0.0f),
-                                 ofRadToDeg(c), ofVec3f(0.0f, 0.0f, 1.0f));
-            m.translate(t);
-            ofVec3f ans = ofMatrix4x4::transform3x3(m, v);
-            
-            KSMatrixSparsef mt(4,4);
-            mt.coeffRef(0, 0) = cosf(b) * cosf(c);
-            mt.coeffRef(0, 1) = sinf(a) * sinf(b) * cosf(c) + cosf(a) * sinf(c);
-            mt.coeffRef(0, 2) = -cosf(a) * sinf(b) * cosf(c) + sinf(a) * sinf(c);
-            
-            mt.coeffRef(1, 0) = -cosf(b) * sinf(c);
-            mt.coeffRef(1, 1) = -sinf(a) * sinf(b) * sinf(c) + cosf(a) * cosf(c);
-            mt.coeffRef(1, 2) = cosf(a) * sinf(b) * sinf(c) + sinf(a) * cosf(c);
-            
-            mt.coeffRef(2, 0) = sinf(b);
-            mt.coeffRef(2, 1) = -sinf(a) * cosf(b);
-            mt.coeffRef(2, 2) = cosf(a) * cosf(b);
-            
-            mt.coeffRef(3, 0) = t.x;
-            mt.coeffRef(3, 1) = t.y;
-            mt.coeffRef(3, 2) = t.z;
-
-            KSVectorSparsef vt(4);
-            vt.coeffRef(0) = v.x;
-            vt.coeffRef(1) = v.y;
-            vt.coeffRef(2) = v.z;
-            vt.coeffRef(3) = 1;
-            
-            KSVectorSparsef at = vt.transpose() * mt;
-            
-            ofLog(OF_LOG_ERROR, "X: [my]%lf, [of]%lf", at.coeff(0), ans.x);
-            ofLog(OF_LOG_ERROR, "Y: [my]%lf, [of]%lf", at.coeff(1), ans.y);
-            ofLog(OF_LOG_ERROR, "Z: [my]%lf, [of]%lf", at.coeff(2), ans.z);
-            
-        }
-        
-        // ロール、ピッチ、ヨーの順で回転した後平行移動する行列を作成
-        ofMatrix4x4 m, mr, mp, my;
+        // X、Y、Z軸の順で回転する行列を作成
+        ofMatrix4x4 m;
         m.makeRotationMatrix(ofRadToDeg(anser[0]), ofVec3f(1.0f, 0.0f, 0.0f),
                              ofRadToDeg(anser[1]), ofVec3f(0.0f, 1.0f, 0.0f),
                              ofRadToDeg(anser[2]), ofVec3f(0.0f, 0.0f, 1.0f));
-        m.translate(anser[3], anser[4], anser[5]);
+        // 平行移動成分
+        ofVec3f t = {anser[3], anser[4], anser[5]};
         
-        // 適当に入力を作る
-        int sampleVecNum = 40;
+        // 適当に入力データサンプルを作る
+        int sampleVecNum = 20;
         KSMatrixSparsef data(2, 3 * sampleVecNum);
         for (int i = 0; i < sampleVecNum; ++i)
         {
-            ofVec4f v;
-            v.x = ofRandom(-1.0f, 1.0f);
-            v.y = ofRandom(-1.0f, 1.0f);
-            v.z = ofRandom(-1.0f, 1.0f);
-            v.w = 1.0f;
+            ofVec3f v;
+            v.x = ofRandom(-10.0f, 10.0f);
+            v.y = ofRandom(-10.0f, 10.0f);
+            v.z = ofRandom(-10.0f, 10.0f);
             
-            ofVec4f a = m * v;
+            ofVec3f a = ofMatrix4x4::transform3x3(m, v);
+            a += t;
             
             data.insert(0, 3*i+0) = v.x;
             data.insert(0, 3*i+1) = v.y;
@@ -414,7 +368,7 @@ bool    ofTest::DoTest()
         optimizer.SwitchNormalEquationSolver(NESolverType::PCG);
         
         // PGCの試行回数のセット
-        optimizer.SetMaxIterations(8);
+        optimizer.SetMaxIterations(4);
         
         // 残差関数
         KSFunctionSparse  residual    = [&optimizer](const KSMatrixSparsef &x)->KSMatrixSparsef
@@ -422,35 +376,77 @@ bool    ofTest::DoTest()
             const KSMatrixSparsef& data = optimizer.GetDataMat();
             KSMatrixSparsef d(data.cols(), 1);
             
-            float r = x.coeff(0, 0); // ロール
-            float p = x.coeff(1, 0); // ピッチ
-            float y = x.coeff(2, 0); // ヨー
+            float a = x.coeff(0, 0); // X軸回転角
+            float b = x.coeff(1, 0); // Y軸回転角
+            float c = x.coeff(2, 0); // Z軸回転角
             
             KSMatrixSparsef mt(4,4);
-            mt.coeffRef(0, 0) = cosf(r) * cosf(p);
-            mt.coeffRef(0, 1) = sinf(r) * cosf(p);
-            mt.coeffRef(0, 2) = -sinf(p);
-            mt.coeffRef(0, 3) = 0.0;
-            mt.coeffRef(1, 0) = cosf(r) * sinf(p) * sinf(y) - sinf(r) * cosf(y);
-            mt.coeffRef(1, 1) = sinf(r) * sinf(p) * sinf(y) + cosf(r) * cosf(y);
-            mt.coeffRef(1, 2) = cosf(p) * sinf(y);
-            mt.coeffRef(1, 3) = 0.0;
-            mt.coeffRef(2, 0) = cosf(r) * sinf(p) * cosf(y) + sinf(r) * sinf(y);
-            mt.coeffRef(2, 1) = sinf(r) * sinf(p) * cosf(y) - cosf(r) * sinf(y);
-            mt.coeffRef(2, 2) = cosf(p) * cosf(y);
-            mt.coeffRef(2, 3) = 0.0;
+            
+             // X,Y,Z回転回転
+            mt.coeffRef(0, 0) = cosf(b) * cosf(c);
+            mt.coeffRef(0, 1) = sinf(a) * sinf(b) * cosf(c) - cosf(a) * sinf(c);
+            mt.coeffRef(0, 2) = cosf(a) * sinf(b) * cosf(c) + sinf(a) * sinf(c);
+            
+            mt.coeffRef(1, 0) = cosf(b) * sinf(c);
+            mt.coeffRef(1, 1) = sinf(a) * sinf(b) * sinf(c) + cosf(a) * cosf(c);
+            mt.coeffRef(1, 2) = cosf(a) * sinf(b) * sinf(c) - sinf(a) * cosf(c);
+            
+            mt.coeffRef(2, 0) = -sinf(b);
+            mt.coeffRef(2, 1) = sinf(a) * cosf(b);
+            mt.coeffRef(2, 2) = cosf(a) * cosf(b);
+            
+            /*
+            // X回転
+            mt.coeffRef(0, 0) = 1.0f;
+            mt.coeffRef(0, 1) = 0.0f;
+            mt.coeffRef(0, 2) = 0.0f;
+            
+            mt.coeffRef(1, 0) = 0.0f;
+            mt.coeffRef(1, 1) = cosf(a);
+            mt.coeffRef(1, 2) = -sinf(a);
+            
+            mt.coeffRef(2, 0) = 0.0f;
+            mt.coeffRef(2, 1) = sinf(a);
+            mt.coeffRef(2, 2) = cosf(a);
+            */
+            
+            /*
+            // Y回転
+            mt.coeffRef(0, 0) = cosf(b);
+            mt.coeffRef(0, 1) = 0.0f;
+            mt.coeffRef(0, 2) = sinf(b);
+            
+            mt.coeffRef(1, 0) = 0.0f;
+            mt.coeffRef(1, 1) = 1.0f;
+            mt.coeffRef(1, 2) = 0.0f;
+            
+            mt.coeffRef(2, 0) = -sinf(b);
+            mt.coeffRef(2, 1) = 0.0f;
+            mt.coeffRef(2, 2) = cosf(b);
+             */
+            
+            /*
+             // Z回転
+             mt.coeffRef(0, 0) = cosf(c);
+             mt.coeffRef(0, 1) = -sinf(c);
+             mt.coeffRef(0, 2) = 0.0f;
+             
+             mt.coeffRef(1, 0) = sinf(c);
+             mt.coeffRef(1, 1) = cosf(c);
+             mt.coeffRef(1, 2) = 0.0f;
+             
+             mt.coeffRef(2, 0) = 0.0;
+             mt.coeffRef(2, 1) = 0.0f;
+             mt.coeffRef(2, 2) = 1.0f;
+             */
+            
+            // 平行移動成分
             mt.coeffRef(3, 0) = x.coeff(3, 0);
             mt.coeffRef(3, 1) = x.coeff(4, 0);
             mt.coeffRef(3, 2) = x.coeff(5, 0);
             mt.coeffRef(3, 3) = 1.0;
             
-            // 実験
-            ofMatrix4x4 mt2, mt2r, mt2p, mt2y;
-            mt2.makeRotationMatrix(ofRadToDeg(r), ofVec3f(1.0f, 0.0f, 0.0f),
-                                 ofRadToDeg(p), ofVec3f(0.0f, 1.0f, 0.0f),
-                                 ofRadToDeg(y), ofVec3f(0.0f, 0.0f, 1.0f));
-            mt2.translate(x.coeff(3, 0), x.coeff(4, 0), x.coeff(5, 0));
-            
+            // 残差計算
             KSVectorSparsef v(4);
             for(int i=0,n=d.rows()/3; i<n; ++i)
             {
@@ -464,20 +460,6 @@ bool    ofTest::DoTest()
                 d.coeffRef(3*i,0)    = data.coeff(1, 3*i) - vmt.coeff(0);
                 d.coeffRef(3*i+1,0)  = data.coeff(1, 3*i+1) - vmt.coeff(1);
                 d.coeffRef(3*i+2,0)  = data.coeff(1, 3*i+2) - vmt.coeff(2);
-                
-                ofVec4f v2;
-                v2.x = data.coeff(0, 3*i);
-                v2.y = data.coeff(0, 3*i+1);
-                v2.z = data.coeff(0, 3*i+2);
-                v2.w = 1.0f;
-                ofVec4f vmt2 = mt2 * v2;
-                
-                ofLog(OF_LOG_ERROR, "r: %lf, p:%lf, y:%lf", r,p,y);
-                ofLog(OF_LOG_ERROR, "X: [opt]%lf, [real]%lf", vmt.coeff(0), vmt2.x);
-                ofLog(OF_LOG_ERROR, "Y: [opt]%lf, [real]%lf", vmt.coeff(1), vmt2.y);
-                ofLog(OF_LOG_ERROR, "Z: [opt]%lf, [real]%lf", vmt.coeff(2), vmt2.z);
-                ofLog(OF_LOG_ERROR, "W: [opt]%lf, [real]%lf", vmt.coeff(3), vmt2.w);
-                
             }
             return d;
         };
@@ -488,9 +470,9 @@ bool    ofTest::DoTest()
             const KSMatrixSparsef& data = optimizer.GetDataMat();
             KSMatrixSparsef d(data.cols(), x.rows());
             
-            float r = x.coeff(0, 0);
-            float p = x.coeff(1, 0);
-            float y = x.coeff(2, 0);
+            float a = x.coeff(0, 0);
+            float b = x.coeff(1, 0);
+            float c = x.coeff(2, 0);
             
             for(int i=0,n=d.rows()/3; i<n; ++i)
             {
@@ -498,16 +480,16 @@ bool    ofTest::DoTest()
                 // cosΘ = 1, sinΘ = Θ
                 // さらに、sin * sin = 0と近似できる。
                 // これを踏まえて行列を変換すると、以下のようになる
-                // (ロール角がr, ピッチ角がp, ヨー角がy, 平行移動が(tx,ty,tz))
-                //      | 1   r   -p  0 |
-                // RT = | -r  1   y   0 |
-                //      | p   -y  1   0 |
+                // (X軸角がa, Y軸角がb, Z軸角がc, 平行移動が(tx,ty,tz))
+                //      | 1   -c  b   0 |
+                // RT = | c   1   -a  0 |
+                //      | -b  a   1   0 |
                 //      | tx  ty  tz  1 |
-                // つまり、v(vx, vy, vz, 1)を変換すると、
-                //          | vx    - r*vy + p*vz + tx |t
-                // v * RT = | r*vx  + vy   - y*vz + ty |
-                //          | -p*vx + y*vy + vz   + tz |
-                //          | 1                        |
+                // つまり、v(x, y, z, 1)を変換すると、
+                //          | x + cy -bz + tx   |t
+                // v * RT = | -cx + y + az + ty |
+                //          | bx - ay + z + tz  |
+                //          | 1                 |
                 // になる。
                 // ということで、ヤコビアンは、、、
                 
@@ -516,28 +498,110 @@ bool    ofTest::DoTest()
                 float vz = data.coeff(0, 3*i+2);
                 
                 //6個入れる
-                d.coeffRef(3*i, 0) = -(-vy);
-                d.coeffRef(3*i, 1) = -(vz);
-                d.coeffRef(3*i, 2) = 0.0;
+                d.coeffRef(3*i, 0) = 0.0;
+                d.coeffRef(3*i, 1) = -(-vz);
+                d.coeffRef(3*i, 2) = -(vy);
                 d.coeffRef(3*i, 3) = -1.0;
                 d.coeffRef(3*i, 4) = 0.0;
                 d.coeffRef(3*i, 5) = 0.0;
                 
                 //6個入れる
-                d.coeffRef(3*i+1, 0) = -(vx);
+                d.coeffRef(3*i+1, 0) = -(vz);
                 d.coeffRef(3*i+1, 1) = 0.0;
-                d.coeffRef(3*i+1, 2) = -(-vz);
+                d.coeffRef(3*i+1, 2) = -(-vx);
                 d.coeffRef(3*i+1, 3) = 0.0;
                 d.coeffRef(3*i+1, 4) = -1.0;
                 d.coeffRef(3*i+1, 5) = 0.0;
                 
                 //6個入れる
-                d.coeffRef(3*i+2, 0) = 0.0;
-                d.coeffRef(3*i+2, 1) = -(-vx);
-                d.coeffRef(3*i+2, 2) = -(vy);
+                d.coeffRef(3*i+2, 0) = -(-vy);
+                d.coeffRef(3*i+2, 1) = -(vx);
+                d.coeffRef(3*i+2, 2) = 0.0;
                 d.coeffRef(3*i+2, 3) = 0.0;
                 d.coeffRef(3*i+2, 4) = 0.0;
                 d.coeffRef(3*i+2, 5) = -1.0;
+                
+                // 以下は各軸の検証
+                    /*
+                     // X軸回転
+                     //6個入れる
+                     d.coeffRef(3*i, 0) = 0.0;
+                     d.coeffRef(3*i, 1) = 0.0;
+                     d.coeffRef(3*i, 2) = 0.0;
+                     d.coeffRef(3*i, 3) = -1.0;
+                     d.coeffRef(3*i, 4) = 0.0;
+                     d.coeffRef(3*i, 5) = 0.0;
+                     
+                     //6個入れる
+                     d.coeffRef(3*i+1, 0) = -(vx);
+                     d.coeffRef(3*i+1, 1) = 0.0;
+                     d.coeffRef(3*i+1, 2) = 0.0;
+                     d.coeffRef(3*i+1, 3) = 0.0;
+                     d.coeffRef(3*i+1, 4) = -1.0;
+                     d.coeffRef(3*i+1, 5) = 0.0;
+                     
+                     //6個入れる
+                     d.coeffRef(3*i+2, 0) = -(-vy);
+                     d.coeffRef(3*i+2, 1) = 0.0;
+                     d.coeffRef(3*i+2, 2) = 0.0;
+                     d.coeffRef(3*i+2, 3) = 0.0;
+                     d.coeffRef(3*i+2, 4) = 0.0;
+                     d.coeffRef(3*i+2, 5) = -1.0;
+                    */
+                    
+                    /*
+                     // Y軸回転
+                    //6個入れる
+                    d.coeffRef(3*i, 0) = 0.0;
+                    d.coeffRef(3*i, 1) = -(-vz);
+                    d.coeffRef(3*i, 2) = 0.0;
+                    d.coeffRef(3*i, 3) = -1.0;
+                    d.coeffRef(3*i, 4) = 0.0;
+                    d.coeffRef(3*i, 5) = 0.0;
+                    
+                    //6個入れる
+                    d.coeffRef(3*i+1, 0) = 0.0;
+                    d.coeffRef(3*i+1, 1) = 0.0;
+                    d.coeffRef(3*i+1, 2) = 0.0;
+                    d.coeffRef(3*i+1, 3) = 0.0;
+                    d.coeffRef(3*i+1, 4) = -1.0;
+                    d.coeffRef(3*i+1, 5) = 0.0;
+                    
+                    //6個入れる
+                    d.coeffRef(3*i+2, 0) = 0.0;
+                    d.coeffRef(3*i+2, 1) = -(vx);
+                    d.coeffRef(3*i+2, 2) = 0.0;
+                    d.coeffRef(3*i+2, 3) = 0.0;
+                    d.coeffRef(3*i+2, 4) = 0.0;
+                    d.coeffRef(3*i+2, 5) = -1.0;
+                    */
+                    
+                    /*
+                     // Z軸回転
+                     //6個入れる
+                     d.coeffRef(3*i, 0) = 0.0;
+                     d.coeffRef(3*i, 1) = 0.0;
+                     d.coeffRef(3*i, 2) = -(vy);
+                     d.coeffRef(3*i, 3) = -1.0;
+                     d.coeffRef(3*i, 4) = 0.0;
+                     d.coeffRef(3*i, 5) = 0.0;
+                     
+                     //6個入れる
+                     d.coeffRef(3*i+1, 0) = 0.0;
+                     d.coeffRef(3*i+1, 1) = 0.0;
+                     d.coeffRef(3*i+1, 2) = -(-vx);
+                     d.coeffRef(3*i+1, 3) = 0.0;
+                     d.coeffRef(3*i+1, 4) = -1.0;
+                     d.coeffRef(3*i+1, 5) = 0.0;
+                     
+                     //6個入れる
+                     d.coeffRef(3*i+2, 0) = 0.0;
+                     d.coeffRef(3*i+2, 1) = 0.0;
+                     d.coeffRef(3*i+2, 2) = 0.0;
+                     d.coeffRef(3*i+2, 3) = 0.0;
+                     d.coeffRef(3*i+2, 4) = 0.0;
+                     d.coeffRef(3*i+2, 5) = -1.0;
+                     */
             }
             
             return d;
@@ -555,11 +619,12 @@ bool    ofTest::DoTest()
         
         std::vector<double> srsLog;
         
+        // ニュートンステップは7回
         const int gaussStepNum = 7;
         TS_START("optimization exmple 4");
         for (int i = 0; i < gaussStepNum; ++i)
         {
-            ofASSERT(optimizer.DoGaussNewtonStepIRLS(), "ガウス-ニュートン計算ステップに失敗しました。");
+            ofASSERT(optimizer.DoGaussNewtonStep(), "ガウス-ニュートン計算ステップに失敗しました。");
             srsLog.push_back(optimizer.GetSquaredResidualsSum());
         }
         TS_STOP("optimization exmple 4");
@@ -570,9 +635,10 @@ bool    ofTest::DoTest()
             ofLog(OF_LOG_NOTICE, "SRS: (%dth step)%lf", i, srsLog[i]);
         }
         
+        // 最適化結果パラメータを照会
         for (int i =0; i < paramNum; ++i)
         {
-            ofLog(OF_LOG_ERROR, "%dth param: [opt]%lf, [ans]%lf", i, optimizer.GetParamMat().coeff(i, 0), anser[i]);
+            ofLog(OF_LOG_NOTICE, "%dth param: [opt]%lf, [ans]%lf", i, optimizer.GetParamMat().coeff(i, 0), anser[i]);
             ofASSERT(fabs(optimizer.GetParamMat().coeff(i, 0) - anser[i]) < 0.01, "パラメータ推定結果が異なります。");
         }
 
