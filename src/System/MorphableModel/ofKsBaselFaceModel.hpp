@@ -17,6 +17,7 @@
 #include "StatisticalModel.h"
 #include "System/Math/KSMath.h"
 
+#include <vector>
 #include <vtkPolyData.h>
 #include <vector>
 
@@ -43,17 +44,23 @@ namespace Kosakasakas
         void    Finalize();
         
         //! MeanShapeをメッシュに書き込む
-        bool    DrawMean();
+        bool    DrawMean(bool cacheNormal = false);
         //! ランダムサンプリングした結果をメッシュに書き込む
-        bool    DrawRandomSample();
+        bool    DrawRandomSample(bool useCachedNormal = false);
         //! 指定のPCAの主成分値でサンプリングした結果をメッシュに書き込む
-        bool    DrawSample(KSVectorXf& shapeCoeff, KSVectorXf& albedoCoeff);
+        bool    DrawSample(KSVectorXf& shapeCoeff, KSVectorXf& albedoCoeff, bool useCachedNormal = false);
+        //! ミーンシェイプの法線をキャッシュしておく
+        bool    CacheMeanShapeNormal();
         
     protected:
         //! モデルの読み込み
         bool    LoadMesh();
         //! データをメッシュに読み込む
-        bool    SetupMesh(ofMesh& dstMesh, vtkPolyData* pSrcVertices, vtkPolyData* pSrcColors);
+        bool    SetupMesh(ofMesh& dstMesh,
+                          vtkPolyData* pSrcVertices,
+                          vtkPolyData* pSrcColors,
+                          bool cacheNormal      = false,  // 法線をキャッシュするかどうか
+                          bool useCachedNormal  = false); // キャッシュされた法線を使うかどうか
         
     protected:
         // All the statismo classes have to be parameterized with the RepresenterType.
@@ -65,11 +72,14 @@ namespace Kosakasakas
         std::string m_DirPath;
         //! HDF5ファイル名
         std::string m_FileName;
-        
+
         //! basel face modelのキャッシュ(shape)
         StatisticalModelType* m_pBaselModelVertices;
         //! basel face modelのキャッシュ(color)
         StatisticalModelType* m_pBaselModelColors;
+        
+        //! 法線キャッシュ
+        std::vector<ofVec3f>    m_aNormalCache;
     };
 }
 

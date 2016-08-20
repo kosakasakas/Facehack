@@ -57,6 +57,7 @@ bool    ofKsBaselFaceModel::Initialize(const char* dirPath, const char* fileName
 {
     m_DirPath   = dirPath;
     m_FileName  = fileName;
+    m_aNormalCache.clear();
     return ofKsModel::Initialize();
 }
 
@@ -67,6 +68,7 @@ void    ofKsBaselFaceModel::Finalize()
 {
     m_DirPath.clear();
     m_FileName.clear();
+    m_aNormalCache.clear();
     
     // 生ポインタは消す
     if (m_pBaselModelVertices)
@@ -155,9 +157,10 @@ bool    ofKsBaselFaceModel::LoadMesh()
  
  PCAのMeanShapeをメッシュに書き込みます.
  必ずInitialize()を読んでから使用してください.
+ @param cacheNormal 法線をキャッシュするかどうか
  @return 成功可否
  */
-bool    ofKsBaselFaceModel::DrawMean()
+bool    ofKsBaselFaceModel::DrawMean(bool cacheNormal)
 {
     if (!m_pBaselModelVertices || !m_pBaselModelColors)
     {
@@ -186,7 +189,7 @@ bool    ofKsBaselFaceModel::DrawMean()
     }
     
     // ofMeshを構築
-    if (!SetupMesh(m_Mesh, pShape, pAlbedo))
+    if (!SetupMesh(m_Mesh, pShape, pAlbedo, cacheNormal, false))
     {
         ofLog(OF_LOG_ERROR, "メッシュの構築に失敗しました");
         goto ERROR_LABEL;
@@ -206,9 +209,10 @@ ERROR_LABEL:
  
  PCAの主成分をランダムでサンプリングした結果をメッシュに書き込みます.
  必ずInitialize()を読んでから使用してください.
+ @param useCachedNormal キャッシュされた法線を使うかどうか.
  @return 成功可否
  */
-bool    ofKsBaselFaceModel::DrawRandomSample()
+bool    ofKsBaselFaceModel::DrawRandomSample(bool useCachedNormal)
 {
     if (!m_pBaselModelVertices || !m_pBaselModelColors)
     {
@@ -237,7 +241,7 @@ bool    ofKsBaselFaceModel::DrawRandomSample()
     }
     
     // ofMeshを構築
-    if (!SetupMesh(m_Mesh, pShape, pAlbedo))
+    if (!SetupMesh(m_Mesh, pShape, pAlbedo, false, useCachedNormal))
     {
         ofLog(OF_LOG_ERROR, "メッシュの構築に失敗しました");
         goto ERROR_LABEL;
@@ -258,9 +262,10 @@ ERROR_LABEL:
  指定したPCAの主成分値でサンプリングした結果をメッシュに書き込みます.
  指定されていない主成分の値は0.0で計算されます.
  必ずInitialize()を読んでから使用してください.
+ @param useNormalCache  法線キャッシュを使って描画するかどうか
  @return 成功可否
  */
-bool    ofKsBaselFaceModel::DrawSample(KSVectorXf& shapeCoeff, KSVectorXf& albedoCoeff)
+bool    ofKsBaselFaceModel::DrawSample(KSVectorXf& shapeCoeff, KSVectorXf& albedoCoeff, bool useNormalCache)
 {
     if (!m_pBaselModelVertices || !m_pBaselModelColors)
     {
@@ -307,7 +312,7 @@ bool    ofKsBaselFaceModel::DrawSample(KSVectorXf& shapeCoeff, KSVectorXf& albed
     }
     
     // ofMeshを構築
-    if (!SetupMesh(m_Mesh, pShape, pAlbedo))
+    if (!SetupMesh(m_Mesh, pShape, pAlbedo, false, useNormalCache))
     {
         ofLog(OF_LOG_ERROR, "メッシュの構築に失敗しました");
         goto ERROR_LABEL;
@@ -326,9 +331,18 @@ ERROR_LABEL:
  @brief データをメッシュに読み込む
  
  書き込んだvtkPolyDataからofMeshにデータをセットアップします.
+ @param dstMesh 書き込み対象のofMesh
+ @param pSrcVertices    ソースとなる頂点データ
+ @param pSrcColors      ソースとなる頂点カラーデータ
+ @param cacheNormal     法線の計算結果をキャッシュしておくかどうか
+ @param useCachedNormal キャッシュされた法線データを使用するかどうか
  @return 成功可否
  */
-bool    ofKsBaselFaceModel::SetupMesh(ofMesh& dstMesh, vtkPolyData* pSrcVertices, vtkPolyData* pSrcColors)
+bool    ofKsBaselFaceModel::SetupMesh(ofMesh& dstMesh,
+                                      vtkPolyData* pSrcVertices,
+                                      vtkPolyData* pSrcColors,
+                                      bool  cacheNormal,
+                                      bool  useCachedNormal)
 {
     if (!pSrcVertices || !pSrcColors)
     {
@@ -390,8 +404,25 @@ bool    ofKsBaselFaceModel::SetupMesh(ofMesh& dstMesh, vtkPolyData* pSrcVertices
         pTriangleColor->GetPoints()->GetPoint(0, c0);
         pTriangleColor->GetPoints()->GetPoint(1, c1);
         pTriangleColor->GetPoints()->GetPoint(2, c2);
-        // 法線計算
-        KSUtil::CalcFaceNormal(n, v0, v1, v2);
+        // 法線の取得
+        if ( useCachedNormal)
+        {
+            if (i >= m_aNormalCache.size())
+            {
+                ofLog(OF_LOG_ERROR, "Normalキャッシュの範囲外を参照しようとしました.もしくはキャッシュが空です.");
+                return false;
+            }
+            
+            nol = m_aNormalCache[i];
+        }
+        else
+        {
+            // 法線計算
+            KSUtil::CalcFaceNormal(n, v0, v1, v2);
+            nol.x    = n[0];
+            nol.y    = n[1];
+            nol.z    = n[2];
+        }
         
         // ベクトルオブジェクトに格納
         vtx[0].x = v0[0];
@@ -421,10 +452,6 @@ bool    ofKsBaselFaceModel::SetupMesh(ofMesh& dstMesh, vtkPolyData* pSrcVertices
         col[2].b = c2[2];
         col[2].a = 1.0f;
         
-        nol.x    = n[0];
-        nol.y    = n[1];
-        nol.z    = n[2];
-        
         // メッシュを構築
         m_Mesh.addVertex(vtx[0]);
         m_Mesh.addVertex(vtx[1]);
@@ -437,8 +464,35 @@ bool    ofKsBaselFaceModel::SetupMesh(ofMesh& dstMesh, vtkPolyData* pSrcVertices
         m_Mesh.addNormal(nol);
         m_Mesh.addNormal(nol);
         m_Mesh.addNormal(nol);
+        
+        if (cacheNormal)
+        {
+            if (m_aNormalCache.size() < numVertices)
+            {
+                m_aNormalCache.resize(numVertices);
+            }
+            m_aNormalCache[i] = nol;
+        }
     }
-
+    
+    // 法線をスムージングするかどうか
+    if (0)
+    {
+        m_Mesh.setupIndicesAuto();
+        m_Mesh.smoothNormals(45.0f);
+    }
+        
     return true;
 }
 
+/**
+ @brief ミーンシェイプの法線をキャッシュしておく
+ 
+ ミーンシェイプを一旦書き出して法線をキャッシュします.
+ @return 成功可否
+ */
+bool    ofKsBaselFaceModel::CacheMeanShapeNormal()
+{
+    m_aNormalCache.clear();
+    return DrawMean(true);
+}
