@@ -119,11 +119,11 @@ void ofApp::update(){
 void ofApp::draw(){
     
     m_pTestModel->Draw();
-    m_pSrcModel->Draw();
+    //m_pSrcModel->Draw();
     
     // フレームバッファを描画
     m_pTestModel->GetTexture().draw(0, 0);
-    m_pSrcModel->GetTexture().draw(300, 0);
+    //m_pSrcModel->GetTexture().draw(300, 0);
     
     ofDrawBitmapString( "press T : start tracking.", 0, 10);
     ofDrawBitmapString( "test model", 0, 30);

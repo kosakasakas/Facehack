@@ -49,8 +49,16 @@ bool    FacialModel::Initialize(const float* const alphaCoeffs,
         KSVectorXf shapeCoeff = Map<const AlphaCoeffArray>(alphaCoeffs);
         KSVectorXf albedoCoeff = Map<const AlphaCoeffArray>(betaCoeffs);
         
+        // 法線キャッシュを使用する
+        bool useCachedNormal = true;
+        if (!m_pBaselModel->CacheMeanShapeNormal())
+        {
+            ofLog(OF_LOG_ERROR, "ミーンシェイプの法線キャッシュに失敗しました.");
+            return false;
+        }
+        
         // PCAモデルの書き出し
-        if(!m_pBaselModel->DrawSample(shapeCoeff, albedoCoeff))
+        if(!m_pBaselModel->DrawSample(shapeCoeff, albedoCoeff, useCachedNormal))
         {
             ofLog(OF_LOG_ERROR, "バーセルモデルのサンプリングに失敗しました.");
             return false;
