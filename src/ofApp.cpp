@@ -2,7 +2,9 @@
 #include "ofTest.h"
 #include "ofxTimeMeasurements.h"
 #include "System/Util/KSUtil.h"
+#include "FacehackInclude.h"
 
+using namespace Facehack;
 using namespace Kosakasakas;
 
 //--------------------------------------------------------------
@@ -15,7 +17,6 @@ void ofApp::setup(){
     TIME_SAMPLE_SET_FRAMERATE(frameRate);
     
     // テスト実施
-    if(0)
     {
         bool testResult = false;
         
@@ -28,96 +29,105 @@ void ofApp::setup(){
         ofASSERT(testResult, "テストに失敗しました。");
     }
     
-    // シェーダのロード
-    m_Shader.load("shader/test.vert", "shader/test.frag");
-    
     // これをしないとUVがピクセル座標になってしまう
     ofDisableArbTex();
     
-    // 画像ロード
-    //m_Image.load("image/alice.jpg");
-    
-    // オフスクリーンレンダリング用のFBO確保
-    m_Fbo.allocate(512, 512, GL_RGBA8);
-    
-    // バーセルPCAモデルのセットアップ
+    // ファクトリ作成
+    int width   = 300;
+    int height  = 200;
+    FacehackFactory factory;
+    if (!factory.Initialize(width, height))
     {
-        // モデルのロード
-        // 権利上、モデルは配布できないので自分で取得してunpublicディレクトリに置いてください.
-        m_BaselFace.Initialize("unpublic", "model2009-publicmm1-bfm.h5");
-        
-        // 適当に主成分を突っ込んでメッシュ構築してみる
-        KSVectorXf shapeCoeff(3);
-        KSVectorXf albedoCoeff(3);
-        shapeCoeff  << 2.0f, 3.0f, 1.0f;
-        albedoCoeff << 0.0f, 1.0f, 1.0f;
-        m_BaselFace.DrawSample(shapeCoeff, albedoCoeff);
-        
-        // 初期位置をセット
-        m_BaselFace.GetModelMatrix().translate(0.5f * m_Fbo.getWidth(), 0.5f * m_Fbo.getHeight(), 0.0f);
+        ofLog(OF_LOG_ERROR, "ファクトリの生成に失敗しました");
+        return;
     }
     
-    // カメラのセットアップ
+    // テストモデルの作成
     {
-        m_Camera.setPosition(0.0f, 0.0f, 0.0f);
-        m_Camera.lookAt(ofVec3f(0.0f, 0.0f, 1.0f));
+        // Facehackパラメータ作成
+        ParamsPtr pParam = make_shared<FacehackParams>();
+        {
+            // カメラパラメータ
+            ofVec3f camPos      = ofVec3f(0.0f, 0.0f, 300.0f);
+            ofVec3f camLookAt   = ofVec3f(0.0f, 0.0f, 0.0f);
+            float camFov        = 60.0f;
+            float camAspectRatio = (float)width/(float)height;
+            
+            // イルミネーションパラメータ
+            GammaCoeffArray gammaR, gammaG, gammaB;
+            gammaR.fill(1.0f);
+            gammaG.fill(1.0f);
+            gammaB.fill(1.0f);
+            
+            // フェイシャルパラメータ
+            AlphaCoeffArray alpha;
+            BetaCoeffArray  beta;
+            DeltaCoeffArray delta;
+            alpha.fill(1.0f);
+            beta.fill(2.0f);
+            delta.fill(3.0f);
+            ofQuaternion faceQ;
+            faceQ.makeRotate(0.0f,  ofVec3f(1.0f, 0.0f, 0.0f),
+                             30.0f, ofVec3f(0.0f, 1.0f, 0.0f),
+                             0.0f,  ofVec3f(0.0f, 0.0f, 1.0f));
+            ofVec3f faceTrans = ofVec3f(0.0f, 0.0f, 0.0f);
+            
+            if (!pParam->Initialize(camPos,
+                                    camLookAt,
+                                    camFov,
+                                    camAspectRatio,
+                                    gammaR,
+                                    gammaG,
+                                    gammaB,
+                                    alpha,
+                                    beta,
+                                    delta,
+                                    faceQ,
+                                    faceTrans))
+            {
+                ofLog(OF_LOG_ERROR, "Facehackパラメータの初期化に失敗しました");
+                return;
+            }
+        }
+        
+        // テストモデルを生成
+        m_pTestModel = factory.Create(pParam);
     }
+    
+    // ソースモデルの作成
+    {
+        // パラメータは初期値でいい
+        ParamsPtr pParam = make_shared<FacehackParams>();
+        if (!pParam->Initialize())
+        {
+            ofLog(OF_LOG_ERROR, "Facehackパラメータの初期化に失敗しました");
+            return;
+        }
+        
+        // モデル生成
+        m_pSrcModel = factory.Create(pParam);
+    }
+    
 }
 
 //--------------------------------------------------------------
 void ofApp::update(){
-    
+    m_pSrcModel->Update();
 }
 
 //--------------------------------------------------------------
 void ofApp::draw(){
-    // デプステスト有効化
-    ofEnableDepthTest();
-    glEnable(GL_CULL_FACE);
-    glCullFace(GL_FRONT);
     
-    // トランスフォーム処理
-    //float spinX = sin(ofGetElapsedTimef()*.35f);
-    //float spinY = cos(ofGetElapsedTimef()*.075f);
-    
-    // シェーダのUniformセット
-    //m_Shader.setUniformTexture("u_sampleTex", m_Image.getTexture(), 0);
-    
-    // カメラを使う
-    m_Camera.begin();
-    {
-        // オフスクリーン描画
-        m_Fbo.begin();
-        {
-            // カラー初期化
-            ofClear(255,255,255, 255);
-            // シェーダ有効化
-            m_Shader.begin();
-            {
-                // 行列をプッシュ
-                ofPushMatrix();
-                {
-                    // 行列取得
-                    const ofMatrix4x4 modelMat  = m_BaselFace.GetModelMatrixConst();
-                    // 移動
-                    ofTranslate(modelMat.getTranslation());
-                    // メッシュを描画
-                    m_BaselFace.GetMesh().draw();
-                    
-                }
-                ofPopMatrix();
-            }
-            m_Shader.end();
-        }
-        m_Fbo.end();
-    }
-    m_Camera.end();
+    m_pTestModel->Draw();
+    m_pSrcModel->Draw();
     
     // フレームバッファを描画
-    m_Fbo.draw(0, 0);
+    m_pTestModel->GetTexture().draw(0, 0);
+    m_pSrcModel->GetTexture().draw(300, 0);
     
-    // UI用にデプステストは切っておく
-    ofDisableDepthTest();
+    ofDrawBitmapString( "press T : start tracking.", 0, 10);
+    ofDrawBitmapString( "test model", 0, 30);
+    
 }
 
 //--------------------------------------------------------------
@@ -143,8 +153,6 @@ void ofApp::mouseDragged(int x, int y, int button){
 //--------------------------------------------------------------
 void ofApp::mousePressed(int x, int y, int button){
 
-    // ランダムでPCAモデル生成
-    m_BaselFace.DrawRandomSample();
 }
 
 //--------------------------------------------------------------

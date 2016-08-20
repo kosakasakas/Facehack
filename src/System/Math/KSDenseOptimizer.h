@@ -47,8 +47,8 @@ namespace Kosakasakas {
          */
         bool    Initialize(KSFunction& residual,
                            KSFunction& jaconian,
-                           KSMatrixXd& initParam,
-                           KSMatrixXd& data);
+                           KSMatrixXf& initParam,
+                           KSMatrixXf& data);
         
         /**
          @brief 最適化ステップの実行（ガウス-ニュートン法）
@@ -85,7 +85,7 @@ namespace Kosakasakas {
          現在のパラメータマトリックスを取得します。
          @return パラメータマトリックス
          */
-        inline const KSMatrixXd&    GetParamMat() const
+        inline const KSMatrixXf&    GetParamMat() const
         {
             return m_MatParam;
         }
@@ -96,7 +96,7 @@ namespace Kosakasakas {
          サンプルデータマトリックスを取得します。
          @return パラメータマトリックス
          */
-        inline const KSMatrixXd&    GetDataMat() const
+        inline const KSMatrixXf&    GetDataMat() const
         {
             return m_MatData;
         }
@@ -117,7 +117,7 @@ namespace Kosakasakas {
          各パラメータは内部でstd::moveされ、所有権がこのクラスに渡ってしまう点に注意して下さい.
          @param paramMat    パラメータ行列
          */
-        inline void SetParamMat(KSMatrixXd& paramMat)
+        inline void SetParamMat(KSMatrixXf& paramMat)
         {
             m_MatParam  = std::move(paramMat);
         }
@@ -145,9 +145,9 @@ namespace Kosakasakas {
         //! 残差のヤコビアンを保持するオブジェクト
         KSFunction  m_FuncJacobian;
         //! パラメータマトリックスを保持するオブジェクト
-        KSMatrixXd  m_MatParam;
+        KSMatrixXf  m_MatParam;
         //! サンプルデータマトリックスを保持するオブジェクト
-        KSMatrixXd  m_MatData;
+        KSMatrixXf  m_MatData;
         
         //! 正規方程式ソルバのファクトリオブジェクト
         KSNESolverFactory   m_NESolverFactory;

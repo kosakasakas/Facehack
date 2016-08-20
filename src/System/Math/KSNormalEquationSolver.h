@@ -43,7 +43,7 @@ namespace Kosakasakas {
          @param maxIterations   演算の試行回数
          @return 計算の成否
          */
-        virtual bool    Solve(KSMatrixXd& dst, KSMatrixXd& y, KSMatrixXd& j, int maxIterations) = 0;
+        virtual bool    Solve(KSMatrixXf& dst, KSMatrixXf& y, KSMatrixXf& j, int maxIterations) = 0;
         
         /**
          @brief 計算実行
@@ -56,7 +56,7 @@ namespace Kosakasakas {
          @param maxIterations   演算の試行回数
          @return 計算の成否
          */
-        virtual bool    Solve(KSMatrixSparsed& dst, KSMatrixSparsed& y, KSMatrixSparsed& j, int maxIterations) = 0;
+        virtual bool    Solve(KSMatrixSparsef& dst, KSMatrixSparsef& y, KSMatrixSparsef& j, int maxIterations) = 0;
     };
     
 } //namespace Kosakasakas {

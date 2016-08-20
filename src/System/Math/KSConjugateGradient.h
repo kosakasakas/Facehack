@@ -55,10 +55,21 @@ namespace Kosakasakas {
          @param j       残差関数のヤコビアン
          @return 計算の成否
          */
-        inline bool Solve(KSMatrixXd& dst, KSMatrixXd& y, KSMatrixXd& j, int maxIterations)
+        inline bool Solve(KSMatrixXf& dst, KSMatrixXf& y, KSMatrixXf& j, int maxIterations)
         {
-            // Denseを使う予定ないので一旦保留
-            return false;
+            KSMatrixXf jt  = j.transpose();
+            KSMatrixXf A   = jt * j;
+            KSMatrixXf b   = jt * y * -1.0;
+            Eigen::ConjugateGradient<KSMatrixXf> solver;
+            solver.compute(A);
+            if(solver.info()!=Eigen::Success)
+            {
+                return false;
+            }
+            solver.setMaxIterations(maxIterations);
+            KSMatrixXf s   = solver.solve(b);
+            dst                 = dst + s;
+            return true;
         };
         
         /**
@@ -71,19 +82,19 @@ namespace Kosakasakas {
          @param j       残差関数のヤコビアン
          @return 計算の成否
          */
-        inline bool Solve(KSMatrixSparsed& dst, KSMatrixSparsed& y, KSMatrixSparsed& j, int maxIterations)
+        inline bool Solve(KSMatrixSparsef& dst, KSMatrixSparsef& y, KSMatrixSparsef& j, int maxIterations)
         {
-            KSMatrixSparsed jt  = j.transpose();
-            KSMatrixSparsed A   = jt * j;
-            KSMatrixSparsed b   = jt * y * -1.0;
-            Eigen::ConjugateGradient<KSMatrixSparsed> solver;
+            KSMatrixSparsef jt  = j.transpose();
+            KSMatrixSparsef A   = jt * j;
+            KSMatrixSparsef b   = jt * y * -1.0;
+            Eigen::ConjugateGradient<KSMatrixSparsef> solver;
             solver.compute(A);
             if(solver.info()!=Eigen::Success)
             {
                 return false;
             }
             solver.setMaxIterations(maxIterations);
-            KSMatrixSparsed s   = solver.solve(b);
+            KSMatrixSparsef s   = solver.solve(b);
             dst                 = dst + s;
             return true;
         };

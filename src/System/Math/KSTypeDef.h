@@ -25,10 +25,21 @@ namespace Kosakasakas {
     typedef Eigen::Matrix<double, Eigen::Dynamic, Eigen::Dynamic>   KSMatrixXd;
     
     /**
+     @brief double精度の任意要素マトリックス
+     現状最適化処理専用で、Eigenラップしただけです。
+     */
+    typedef Eigen::Matrix<float, Eigen::Dynamic, Eigen::Dynamic>   KSMatrixXf;
+    
+    /**
      @brief double精度の任意要素スパースマトリックス
      現状最適化処理専用で、Eigenラップしただけです。
      */
     typedef Eigen::SparseMatrix<double>                             KSMatrixSparsed;
+    /**
+     @brief float精度の任意要素スパースマトリックス
+     現状最適化処理専用で、Eigenラップしただけです。
+     */
+    typedef Eigen::SparseMatrix<float>                             KSMatrixSparsef;
     
     /**
      @brief float精度の任意要素ベクトル
@@ -49,16 +60,22 @@ namespace Kosakasakas {
     typedef Eigen::SparseVector<double>                             KSVectorSparsed;
     
     /**
+     @brief float精度の任意要素スパースベクトル
+     現状最適化処理専用で、Eigenラップしただけです。
+     */
+    typedef Eigen::SparseVector<float>                             KSVectorSparsef;
+    
+    /**
      @brief マトリックス引数の任意ファンクタ
      現状最適化処理専用です。
      */
-    typedef std::function<KSMatrixXd(const KSMatrixXd &x)>              KSFunction;
+    typedef std::function<KSMatrixXf(const KSMatrixXf &x)>              KSFunction;
     
     /**
      @brief スパースマトリックス引数の任意ファンクタ
      現状最適化処理専用です。
      */
-    typedef std::function<KSMatrixSparsed(const KSMatrixSparsed &x)>    KSFunctionSparse;
+    typedef std::function<KSMatrixSparsef(const KSMatrixSparsef &x)>    KSFunctionSparse;
     
     /**
      @brief 正規方程式のソルバータイプ

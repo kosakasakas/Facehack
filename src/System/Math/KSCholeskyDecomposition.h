@@ -54,16 +54,16 @@ namespace Kosakasakas {
          @param maxIterations   演算の試行回数(本手法ではこのパラメータは意味は無い)
          @return 計算の成否
          */
-        inline bool Solve(KSMatrixXd& dst, KSMatrixXd& y, KSMatrixXd& j, int maxIterations)
+        inline bool Solve(KSMatrixXf& dst, KSMatrixXf& y, KSMatrixXf& j, int maxIterations)
         {
-            KSMatrixXd jt   = j.transpose();
+            KSMatrixXf jt   = j.transpose();
             auto llt        = (jt * j).ldlt();
             if (llt.info()  != Eigen::Success)
             {
                 return false;
             }
             
-            KSMatrixXd s    = llt.solve(jt * y * -1.0);
+            KSMatrixXf s    = llt.solve(jt * y * -1.0);
             dst             = dst + s;
             return true;
         };
@@ -79,19 +79,19 @@ namespace Kosakasakas {
          @param maxIterations   演算の試行回数(本手法ではこのパラメータは意味は無い)
          @return 計算の成否
          */
-        inline bool Solve(KSMatrixSparsed& dst, KSMatrixSparsed& y, KSMatrixSparsed& j, int maxIterations)
+        inline bool Solve(KSMatrixSparsef& dst, KSMatrixSparsef& y, KSMatrixSparsef& j, int maxIterations)
         {
-            KSMatrixSparsed jt  = j.transpose();
-            KSMatrixSparsed A   = jt * j;
-            KSMatrixSparsed b   = jt * y * -1.0;
-            Eigen::SimplicialLLT<KSMatrixSparsed> solver;
+            KSMatrixSparsef jt  = j.transpose();
+            KSMatrixSparsef A   = jt * j;
+            KSMatrixSparsef b   = jt * y * -1.0;
+            Eigen::SimplicialLLT<KSMatrixSparsef> solver;
             solver.compute(A);
             if(solver.info()!=Eigen::Success)
             {
                 return false;
             }
             
-            KSMatrixSparsed s   = solver.solve(b);
+            KSMatrixSparsef s   = solver.solve(b);
             dst                 = dst + s;
             return true;
         };
