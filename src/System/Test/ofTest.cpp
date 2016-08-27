@@ -643,5 +643,242 @@ bool    ofTest::DoTest()
         }
 
     }
+    
+    // 例題No.5
+    {
+        // カメラパラメータを解いてみる
+        // カメラは常に原点にあると考えると、ワールド->ビュー変換については考慮しなくていい。
+        // よって透視投影だけ考える。
+        // スクリーンの中心をカメラ空間のZ軸が通るとし、スクリーンがx軸上でlで交差し、y軸上でtで交差するとすると、
+        //     n/l, 0,    0,            0
+        // M = 0,   n/t,  0,            0
+        //     0,   0,    -(f+n)/(f-n), -1
+        //     0,   0,    -2nf/(f-n),   0
+        // ここで、nはニアクリップ、fはファークリップである。
+        // ニアクリップとファークリップは固定値で良いため、ここではn=1.0,f=1000.0とする。
+        
+        // 数値検証実験
+        {
+            float x = -10.0f;
+            float y = 20.0f;
+            float z = -30.0f;
+            
+            float l = 300.0f;
+            float t = 200.0f;
+            
+            float n = 1.0f;
+            float f = 1000.0f;
+            float fov = ofRadToDeg(2.0f * atanf(t/n));
+            float aspect = l / t;
+            ofCamera cam;
+            cam.setNearClip(n);
+            cam.setFarClip(f);
+            cam.setFov(fov);
+            cam.setAspectRatio(aspect);
+            ofMatrix4x4 projMat = cam.getProjectionMatrix();
+            ofVec4f v = {x, y, z, 1.0f};
+            ofVec4f a = v * projMat;
+            
+            KSMatrixSparsed mat(4,4);
+            mat.coeffRef(0, 0) = n/l;
+            mat.coeffRef(1, 1) = n/t;
+            mat.coeffRef(2, 2) = -(f+n)/(f-n);
+            mat.coeffRef(2, 3) = -1.0f;
+            mat.coeffRef(3, 2) = -2.0f * n * f /(f -n );
+            
+            KSVectorSparsed vs(4);
+            vs.coeffRef(0) = x;
+            vs.coeffRef(1) = y;
+            vs.coeffRef(2) = z;
+            vs.coeffRef(3) = 1.0f;
+            
+            KSVectorSparsed as = vs.transpose() * mat;
+            
+            char buff[256];
+            for (int i=0; i<4; ++i)
+            {
+                for (int j=0; j<4; ++j)
+                {
+                    sprintf(buff, "違うよ！(%d,%d), [eigen]:%lf, [of]:%lf",i,j,mat.coeff(i,j), projMat(i,j));
+                    ofASSERT(fabs(mat.coeffRef(i, j) - projMat(i,j)) < 0.01, buff);
+                }
+            }
+            
+            for (int i=0; i<4; ++i)
+            {
+                sprintf(buff, "違うよ！%dth, [eigen]:%lf, [of]:%lf",i,a[i], as.coeff(i));
+                ofASSERT(fabs(a[i] - as.coeff(i)) < 0.01, buff);
+            }
+
+        }
+        
+        // 正解値を適当に与える
+        const int paramNum = 2;
+        float anser[paramNum];
+        anser[0] = 300.0f; // X軸交点
+        anser[1] = 200.0f; // Y軸交点
+        
+        // プロジェクション行列作成
+        float l = anser[0];
+        float t = anser[1];
+        float n = 1.0f;
+        float f = 1000.0f;
+        float fov = ofRadToDeg(2.0f * atanf(t/n));
+        float aspect = l / t;
+        ofCamera cam;
+        cam.setNearClip(n);
+        cam.setFarClip(f);
+        cam.setFov(fov);
+        cam.setAspectRatio(aspect);
+        
+        // 適当に入力データサンプルを作る
+        int sampleVecNum = 1;
+        KSMatrixSparsef data(2, 3 * sampleVecNum);
+        for (int i = 0; i < sampleVecNum; ++i)
+        {
+            ofVec4f v;
+            v.x = ofRandom(-100.0f, 100.0f);
+            v.y = ofRandom(-100.0f, 100.0f);
+            v.z = ofRandom(-100.0f, 100.0f);
+            v.w = 1.0f;
+            
+            /*
+            ofVec3f t = {0.0f, 0.0f, -20.0f};
+            v += t;
+            */
+            
+            ofVec4f a = v * cam.getProjectionMatrix();
+             
+            data.insert(0, 3*i+0) = v.x;
+            data.insert(0, 3*i+1) = v.y;
+            data.insert(0, 3*i+2) = v.z;
+            
+            data.insert(1, 3*i+0) = a.x;
+            data.insert(1, 3*i+1) = a.y;
+            data.insert(1, 3*i+2) = a.z;
+        }
+        
+        // オプティマイザの宣言
+        KSSparseOptimizer  optimizer;
+        
+        // ソルバを前処理付き共役勾配法(PGC)に変更
+        optimizer.SwitchNormalEquationSolver(NESolverType::PCG);
+        
+        // PGCの試行回数のセット
+        optimizer.SetMaxIterations(4);
+        
+        // 残差関数
+        KSFunctionSparse  residual    = [&optimizer](const KSMatrixSparsef &x)->KSMatrixSparsef
+        {
+            const KSMatrixSparsef& data = optimizer.GetDataMat();
+            KSMatrixSparsef d(data.cols(), 1);
+            
+            float l = x.coeff(0, 0);
+            float t = x.coeff(1, 0);
+            float n = 1.0f;
+            float f = 1000.0f;
+            
+            KSMatrixSparsef mt(4,4);
+            
+            mt.coeffRef(0, 0) = n/l;
+            mt.coeffRef(1, 1) = n/t;
+            mt.coeffRef(2, 2) = -(f+n)/(f-n);
+            mt.coeffRef(2, 3) = -1.0f;
+            mt.coeffRef(3, 2) = -2.0f * n * f /(f -n );
+            
+            // 残差計算
+            KSVectorSparsef v(4);
+            for(int i=0,n=d.rows()/3; i<n; ++i)
+            {
+                v.coeffRef(0) = data.coeff(0, 3*i);
+                v.coeffRef(1) = data.coeff(0, 3*i+1);
+                v.coeffRef(2) = data.coeff(0, 3*i+2);
+                v.coeffRef(3) = 1.0f;
+                
+                // r = a - v * mt
+                KSVectorSparsef vmt = v.transpose() * mt;
+                d.coeffRef(3*i,0)    = data.coeff(1, 3*i) - vmt.coeff(0);
+                d.coeffRef(3*i+1,0)  = data.coeff(1, 3*i+1) - vmt.coeff(1);
+                d.coeffRef(3*i+2,0)  = data.coeff(1, 3*i+2) - vmt.coeff(2);
+            }
+            return d;
+        };
+        
+        // 残差のヤコビアン
+        KSFunctionSparse jacobian     = [&optimizer](const KSMatrixSparsef &x)->KSMatrixSparsef
+        {
+            const KSMatrixSparsef& data = optimizer.GetDataMat();
+            KSMatrixSparsef d(data.cols(), x.rows());
+            
+            float l = x.coeff(0, 0);
+            float t = x.coeff(1, 0);
+            float n = 1.0f;
+            float f = 1000.0f;
+            
+            for(int i=0,n=d.rows()/3; i<n; ++i)
+            {
+                //     n/l, 0,    0,            0
+                // M = 0,   n/t,  0,            0
+                //     0,   0,    -(f+n)/(f-n), -1
+                //     0,   0,    -2nf/(f-n),   0
+                //
+                
+                float vx = data.coeff(0, 3*i+0);
+                float vy = data.coeff(0, 3*i+1);
+                float vz = data.coeff(0, 3*i+2);
+                
+                //2個入れる
+                d.coeffRef(3*i, 0) = -(-n*vx/(l*l));
+                d.coeffRef(3*i, 1) = 0.0;
+                
+                //2個入れる
+                d.coeffRef(3*i+1, 0) = 0.0;
+                d.coeffRef(3*i+1, 1) = -(-n*vy/(t*t));
+                
+                //2個入れる
+                d.coeffRef(3*i+2, 0) = 0.0;
+                d.coeffRef(3*i+2, 1) = 0.0;
+            }
+            
+            return d;
+        };
+        
+        // 正解値マトリックスの初期値を設定
+        KSMatrixSparsef param(paramNum,1);
+        for (int i = 0; i < paramNum; ++i)
+        {
+            param.coeffRef(i, 0) = 100.0;
+        }
+        
+        // オプティマイザの初期化
+        optimizer.Initialize(residual, jacobian, param, data);
+        
+        std::vector<double> srsLog;
+        
+        // ニュートンステップは7回
+        const int gaussStepNum = 7;
+        TS_START("optimization exmple 5");
+        for (int i = 0; i < gaussStepNum; ++i)
+        {
+            ofASSERT(optimizer.DoGaussNewtonStep(), "ガウス-ニュートン計算ステップに失敗しました。");
+            srsLog.push_back(optimizer.GetSquaredResidualsSum());
+        }
+        TS_STOP("optimization exmple 5");
+        
+        //各ステップでの残差平方和
+        for(int i = 0; i < gaussStepNum; ++i)
+        {
+            ofLog(OF_LOG_NOTICE, "SRS: (%dth step)%lf", i, srsLog[i]);
+        }
+        
+        // 最適化結果パラメータを照会
+        for (int i =0; i < paramNum; ++i)
+        {
+            ofLog(OF_LOG_NOTICE, "%dth param: [opt]%lf, [ans]%lf", i, optimizer.GetParamMat().coeff(i, 0), anser[i]);
+            ofASSERT(fabs(optimizer.GetParamMat().coeff(i, 0) - anser[i]) < 0.01, "パラメータ推定結果が異なります。");
+        }
+        
+    }
+    
     return true;
 }
