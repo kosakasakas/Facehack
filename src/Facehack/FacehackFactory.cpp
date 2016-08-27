@@ -54,11 +54,8 @@ FacehackModelPtr   FacehackFactory::Create(const ParamsPtr& pParam)
     // カメラモデルの構築
     const float upVec[] = {0.0f, 1.0f, 0.0f};
     CameraModelPtr pCamera  = make_shared<CameraModel>();
-    if (!pCamera->Initialize(pParam->GetCameraPosition(),
-                             pParam->GetCameraLookAt(),
-                             upVec,
-                             pParam->GetCameraFov(),
-                             pParam->GetCameraAspectRatio()))
+    if (!pCamera->Initialize(pParam->GetCameraXClip(),
+                             pParam->GetCameraYClip()))
     {
         ofLog(OF_LOG_ERROR, "カメラモデルの構築に失敗しました.");
         return nullptr;

@@ -21,10 +21,8 @@ namespace Facehack {
     public:
         FacehackParams();
         virtual ~FacehackParams();
-        bool    Initialize(const ofVec3f& camPos,
-                           const ofVec3f& camLookAt,
-                           float camFov,
-                           float camRatio,
+        bool    Initialize(float CameraXClip,
+                           float CameraYClip,
                            const GammaCoeffArray& gammaCoeffsR,
                            const GammaCoeffArray& gammaCoeffsG,
                            const GammaCoeffArray& gammaCoeffsB,
@@ -37,10 +35,14 @@ namespace Facehack {
         void    Finalize();
         
         // カメラモデル用
+        float   GetCameraXClip() const;
+        float   GetCameraYClip() const;
+        /*
         const float* const  GetCameraPosition() const;
         const float* const  GetCameraLookAt() const;
         const float         GetCameraFov() const;
         const float         GetCameraAspectRatio() const;
+         */
         
         void    SetCameraPosition(const ofVec3f& pos);
         void    SetCameraLookAt(const ofVec3f& lookAt);
@@ -73,10 +75,9 @@ namespace Facehack {
         enum DataLayout
         {
             CAM_POS     = 0,
-            CAM_LOOKAT  = CAM_POS       + 3,
-            CAM_FOV     = CAM_LOOKAT    + 3,
-            CAM_ASPECT  = CAM_FOV       + 1,
-            GAMMA_R     = CAM_ASPECT    + 1,
+            CAM_XCLIP   = CAM_POS       + 1,
+            CAM_YCLIP   = CAM_XCLIP     + 1,
+            GAMMA_R     = CAM_YCLIP     + 1,
             GAMMA_G     = GAMMA_R       + GAMMA_COEFF_NUM,
             GAMMA_B     = GAMMA_G       + GAMMA_COEFF_NUM,
             ALPHA       = GAMMA_B       + GAMMA_COEFF_NUM,

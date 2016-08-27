@@ -48,10 +48,8 @@ void ofApp::setup(){
         ParamsPtr pParam = make_shared<FacehackParams>();
         {
             // カメラパラメータ
-            ofVec3f camPos      = ofVec3f(0.0f, 0.0f, 300.0f);
-            ofVec3f camLookAt   = ofVec3f(0.0f, 0.0f, 0.0f);
-            float camFov        = 60.0f;
-            float camAspectRatio = (float)width/(float)height;
+            float camXClip = 0.15f;
+            float camYClip = 0.1f;
             
             // イルミネーションパラメータ
             GammaCoeffArray gammaR, gammaG, gammaB;
@@ -70,12 +68,10 @@ void ofApp::setup(){
             faceQ.makeRotate(0.0f,  ofVec3f(1.0f, 0.0f, 0.0f),
                              30.0f, ofVec3f(0.0f, 1.0f, 0.0f),
                              0.0f,  ofVec3f(0.0f, 0.0f, 1.0f));
-            ofVec3f faceTrans = ofVec3f(0.0f, 0.0f, 0.0f);
+            ofVec3f faceTrans = ofVec3f(0.0f, 0.0f, -300.0f);
             
-            if (!pParam->Initialize(camPos,
-                                    camLookAt,
-                                    camFov,
-                                    camAspectRatio,
+            if (!pParam->Initialize(camXClip,
+                                    camYClip,
                                     gammaR,
                                     gammaG,
                                     gammaB,

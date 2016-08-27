@@ -18,35 +18,37 @@ namespace Facehack {
     public:
         CameraModel();
         virtual ~CameraModel();
-        bool    Initialize(const float* const pos,
-                           const float* const lookAt,
-                           const float* const upVec,
-                           float fov,
-                           float aspectRatio);
+        bool    Initialize(float XClip, float YClip);
         bool    Initialize();
         void    Finalize();
         
-        void    Update(float* aPos, float* aLookAt, float fov);
+        void    Update(float XClip, float YClip);
         
         inline const ofCamera&  GetCamera() const
         {
             return m_Cam;
         }
         
-        inline const ofVec3f& GetPosition() const
+        inline float GetXClip() const
         {
-            return m_Position;
+            return m_XClip;
         }
         
+        inline float GetYClip() const
+        {
+            return m_YClip;
+        }
     private:
         //! カメラ
         ofCamera    m_Cam;
-        //!
-        ofVec3f     m_Position;
-        ofVec3f     m_LookAt;
-        ofVec3f     m_UpVec;
-        float       m_Fov;
-        float       m_AspectRatio;
+        //! カメラのクリップのX軸との交点
+        float m_XClip;
+        //! カメラのクリップのY軸との交点
+        float m_YClip;
+        //! ニアクリップ（固定）
+        const float m_NearClip  = 0.15f;
+        //! ファークリップ（固定）
+        const float m_FarClip   = 1000.0f;
     };
 }
 

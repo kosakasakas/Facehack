@@ -16,43 +16,18 @@ CameraModel::CameraModel()
 CameraModel::~CameraModel()
 {}
 
-bool    CameraModel::Initialize(const float* const pos,
-                                const float* const lookAt,
-                                const float* const upVec,
-                                float fov,
-                                float aspectRatio)
+bool    CameraModel::Initialize(float XClip, float YClip)
 {
-    m_Position      = ofVec3f(*pos, *(pos+1), *(pos+2));
-    m_LookAt        = ofVec3f(*lookAt, *(lookAt+1), *(lookAt+2));
-    m_UpVec         = ofVec3f(*upVec, *(upVec+1), *(upVec+2));
-    m_Fov           = fov;
-    m_AspectRatio   = aspectRatio;
+    m_XClip = XClip;
+    m_YClip = YClip;
     
-    m_Cam.setPosition(m_Position);
-    m_Cam.lookAt(m_LookAt, m_UpVec);
-    m_Cam.setFov(m_Fov);
-    m_Cam.setAspectRatio(m_AspectRatio);
-    m_Cam.setNearClip(0.1f);
-    m_Cam.setFarClip(1000.0f);
-    
-    return true;
-}
-
-
-bool    CameraModel::Initialize()
-{
-    m_Position      = ofVec3f(0.0, 0.0, 500.0);
-    m_LookAt        = ofVec3f(0.0, 0.0, 0.0);
-    m_UpVec         = ofVec3f(0.0, 1.0, 0.0);
-    m_Fov           = 60.0f;
-    m_AspectRatio   = 3.0 / 2.0;
-    
-    m_Cam.setPosition(m_Position);
-    m_Cam.lookAt(m_LookAt, m_UpVec);
-    m_Cam.setFov(m_Fov);
-    m_Cam.setAspectRatio(m_AspectRatio);
-    m_Cam.setNearClip(0.1f);
-    m_Cam.setFarClip(1000.0f);
+    float fov = ofRadToDeg(2.0f * atanf(m_YClip / m_NearClip));
+    float aspect = m_XClip / m_YClip;
+    m_Cam.setNearClip(m_NearClip);
+    m_Cam.setFarClip(m_FarClip);
+    m_Cam.setFov(fov);
+    m_Cam.setAspectRatio(aspect);
+    m_Cam.setPosition(0.0f, 0.0f, 0.0f); // カメラは常に原点に置いておく。
     
     return true;
 }
@@ -60,8 +35,6 @@ bool    CameraModel::Initialize()
 void    CameraModel::Finalize()
 {}
 
-void    CameraModel::Update(float* pos,
-                            float* lookAt,
-                            float fov)
+void    CameraModel::Update(float XClip, float YClip)
 {
 }

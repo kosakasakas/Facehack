@@ -77,13 +77,13 @@ void    FacehackModel::Draw()
             {
                 cam.begin();
                 {
+                    // 平行移動
+                    ofTranslate(m_pFacialModel->GetTransform());
+                    
                     // 回転
                     float angle, x, y, z;
                     m_pFacialModel->GetQuaternion().getRotate(angle, x, y, z);
                     ofRotate(angle, x, y, z);
-                    
-                    // 平行移動
-                    ofTranslate(m_pFacialModel->GetTransform());
                     
                     // メッシュを描画
                     m_pFacialModel->GetMesh().draw();

@@ -17,10 +17,8 @@ FacehackParams::FacehackParams()
 FacehackParams::~FacehackParams()
 {}
 
-bool    FacehackParams::Initialize(const ofVec3f& camPos,
-                                   const ofVec3f& camLookAt,
-                                   float camFov,
-                                   float camRatio,
+bool    FacehackParams::Initialize(float CameraXClip,
+                                   float CameraYClip,
                                    const GammaCoeffArray& gammaCoeffsR,
                                    const GammaCoeffArray& gammaCoeffsG,
                                    const GammaCoeffArray& gammaCoeffsB,
@@ -31,18 +29,8 @@ bool    FacehackParams::Initialize(const ofVec3f& camPos,
                                    const ofVec3f& faceTrans)
 {
     // データを格納していく
-    m_pParams(CAM_POS)      = camPos.x;
-    m_pParams(CAM_POS+1)    = camPos.y;
-    m_pParams(CAM_POS+2)    = camPos.z;
-    
-    m_pParams(CAM_LOOKAT)   = camLookAt.x;
-    m_pParams(CAM_LOOKAT+1) = camLookAt.y;
-    m_pParams(CAM_LOOKAT+2)   = camLookAt.z;
-    
-    m_pParams(CAM_FOV)      = camFov;
-    
-    m_pParams(CAM_ASPECT)   = camRatio;
-
+    m_pParams(CAM_XCLIP)    = CameraXClip;
+    m_pParams(CAM_YCLIP)    = CameraYClip;
     
     std::memcpy(m_pParams.data()+GAMMA_R,
                 gammaCoeffsR.data(),
@@ -88,13 +76,8 @@ bool FacehackParams::Initialize()
     m_pParams(CAM_POS+1)    = 0.0f;
     m_pParams(CAM_POS+2)    = 500.0f;
     
-    m_pParams(CAM_LOOKAT)      = 0.0f;
-    m_pParams(CAM_LOOKAT+1)    = 0.0f;
-    m_pParams(CAM_LOOKAT+2)    = 0.0f;
-    
-    m_pParams(CAM_FOV)      = 60.0f;
-    
-    m_pParams(CAM_ASPECT)    = 3.0f / 2.0f;
+    m_pParams(CAM_XCLIP)    = 300.0f;
+    m_pParams(CAM_YCLIP)    = 200.0f;
     
     std::fill_n(m_pParams.data()+ALPHA,
                 ALPHA_COEFF_NUM,
@@ -132,23 +115,15 @@ bool FacehackParams::Initialize()
     return true;
 }
 
-const float* const   FacehackParams::GetCameraPosition() const
+float FacehackParams::GetCameraXClip() const
 {
-    return (m_pParams.data() + CAM_POS);
-}
-const float* const  FacehackParams::GetCameraLookAt() const
-{
-    return (m_pParams.data() + CAM_LOOKAT);
-}
-const float         FacehackParams::GetCameraFov() const
-{
-    return *(m_pParams.data() + CAM_FOV);
-}
-const float         FacehackParams::GetCameraAspectRatio() const
-{
-    return *(m_pParams.data() + CAM_ASPECT);
+    return m_pParams(CAM_XCLIP);
 }
 
+float FacehackParams::GetCameraYClip() const
+{
+    return m_pParams(CAM_YCLIP);
+}
 
 const float* const  FacehackParams::GetGammaCoeffsR() const
 {
