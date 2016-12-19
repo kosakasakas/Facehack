@@ -715,7 +715,7 @@ bool    ofTest::DoTest()
         // 正解値を適当に与える
         const int paramNum = 2;
         float anser[paramNum];
-        anser[0] = 300.0f; // X軸交点
+        anser[0] = 400.0f; // X軸交点
         anser[1] = 200.0f; // Y軸交点
         
         // プロジェクション行列作成
@@ -877,7 +877,6 @@ bool    ofTest::DoTest()
             ofLog(OF_LOG_NOTICE, "%dth param: [opt]%lf, [ans]%lf", i, optimizer.GetParamMat().coeff(i, 0), anser[i]);
             ofASSERT(fabs(optimizer.GetParamMat().coeff(i, 0) - anser[i]) < 0.01, "パラメータ推定結果が異なります。");
         }
-        
     }
     
     return true;
