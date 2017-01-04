@@ -1,3 +1,10 @@
+## Status
+Facehack is in development. So, it is not able to capture your facial expressions yet.  
+I have been developed the facehack as a hobby, so please forgive my slow update.  
+  
+Facehackは現在開発中です.なので表情の反映はまだできません.  
+Facehackの開発は趣味として行っていますので、更新が遅れることをどうかご了承ください.
+
 # 概要
 最新論文を追実装してみようという試み
 
