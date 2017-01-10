@@ -19,6 +19,7 @@ e-mail: tkosaka15@gmail.com
 # 動作確認環境
 El capitan OS X 10.11.5
 openFrameworks v0.9.3
+vtk7.1対応
 
 # 依存関係
 hdf5の読み込みのために[statismo](https://github.com/statismo/statismo)を利用しています.
